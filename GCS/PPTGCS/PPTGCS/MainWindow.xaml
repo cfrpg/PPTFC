@@ -1,0 +1,70 @@
+﻿<Window x:Class="PPTGCS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PPTGCS"
+        mc:Ignorable="d"
+        Title="PPTGS - cfrpg" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="consoleText" Grid.RowSpan="3" Margin="5" VerticalScrollBarVisibility="Visible"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="Port:" VerticalAlignment="Center" Margin="5,0"/>
+            <ComboBox x:Name="portComboBox" VerticalAlignment="Center" Margin="5,0" Width="100"/>
+            <Button x:Name="connectBtn" Content="Connect" VerticalAlignment="Center" Margin="5,0" Click="ConnectBtn_Click"/>
+            <Button x:Name="refreshBtn" Content="Refresh" VerticalAlignment="Center" Margin="5,0" Click="RefreshBtn_Click"/>
+            <Button x:Name="showBtn" Content="CheckParams" VerticalAlignment="Center" Margin="5,0" Click="ShowBtn_Click" />
+        </StackPanel>
+        <ListView x:Name="paramListView" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding}">
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="ID" Width="30">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ID}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Name" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Value" Width="150">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Value}" MinWidth="130" HorizontalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Upload" Width="50">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button x:Name="uploadBtn" Width="30" Content="  " IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListViewItem},Path=IsSelected}" Height="Auto" HorizontalAlignment="Center" Click="UploadBtn_Click"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" >
+            <TextBox x:Name="cmdText" VerticalAlignment="Center" HorizontalAlignment="Left" Width="300" Margin="5,0" />
+            <Button x:Name="sendCmdBtn" Content="Send" VerticalAlignment="Center" Margin="5,0" Click="SendCmdBtn_Click" />
+        </StackPanel>
+        
+        
+    </Grid>
+</Window>
