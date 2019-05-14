@@ -29,8 +29,8 @@ namespace PPTGCS
 		{
 			get => value;
 			set
-			{
-				this.value = value;
+			{				
+				this.value = value;				
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
 			}
 		}
@@ -63,6 +63,19 @@ namespace PPTGCS
 			if (vi >= 1000000)
 				vi = 999999;
 			return string.Format("*set{0:D2}{1}{2:D6}/", id, sign, vi);
+		}
+
+		public void SetBinaryValue(float v)
+		{
+			int vi = (int)Math.Round(Math.Abs(v));
+			int one = 1, res = 0;
+			while (vi > 0)
+			{
+				res += one;
+				one *= 10;
+				vi >>= 1;
+			}
+			this.Value = res;
 		}
 	}
 }

@@ -13,8 +13,8 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <TextBox x:Name="consoleText" Grid.RowSpan="3" Margin="5" VerticalScrollBarVisibility="Visible"/>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
@@ -23,6 +23,7 @@
             <Button x:Name="connectBtn" Content="Connect" VerticalAlignment="Center" Margin="5,0" Click="ConnectBtn_Click"/>
             <Button x:Name="refreshBtn" Content="Refresh" VerticalAlignment="Center" Margin="5,0" Click="RefreshBtn_Click"/>
             <Button x:Name="showBtn" Content="CheckParams" VerticalAlignment="Center" Margin="5,0" Click="ShowBtn_Click" />
+            <Button x:Name="readoutBtn" Content="Read out" VerticalAlignment="Center" Margin="5,0" Click="ReadoutBtn_Click"/>
         </StackPanel>
         <ListView x:Name="paramListView" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding}">
             <ListView.View>
@@ -49,10 +50,10 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Upload" Width="50">
+                        <GridViewColumn Header="Upload" Width="70">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button x:Name="uploadBtn" Width="30" Content="  " IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListViewItem},Path=IsSelected}" Height="Auto" HorizontalAlignment="Center" Click="UploadBtn_Click"/>
+                                    <Button x:Name="uploadBtn" Width="50" Content="Upload" IsEnabled="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListViewItem},Path=IsSelected}" Height="Auto" HorizontalAlignment="Center" Click="UploadBtn_Click"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -61,7 +62,7 @@
             </ListView.View>
         </ListView>
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" >
-            <TextBox x:Name="cmdText" VerticalAlignment="Center" HorizontalAlignment="Left" Width="300" Margin="5,0" />
+            <TextBox x:Name="cmdText" VerticalAlignment="Center" HorizontalAlignment="Left" Width="400" Margin="5,0" />
             <Button x:Name="sendCmdBtn" Content="Send" VerticalAlignment="Center" Margin="5,0" Click="SendCmdBtn_Click" />
         </StackPanel>
         
