@@ -24,6 +24,7 @@ typedef struct
 	float aile;
 	float elev;
 	float phi;
+	float yaw_scale;
 	u16 tailFlag;
 } ParameterSet;
 

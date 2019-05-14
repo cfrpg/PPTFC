@@ -34,6 +34,7 @@ float pwmOut[4];
 PIDData phiPID;
 s8 armed;
 s8 dir;
+s8 position;
 
 int main(void)
 {	
@@ -163,6 +164,10 @@ void Init(void)
 		dir=1;
 	else
 		dir=-1;
+	if(SW2)
+		position=0;
+	else
+		position=1;
 }
 
 void UpdateFlight(void)
@@ -193,7 +198,10 @@ void UpdateFlight(void)
 
 	if(thro>0)
 	{
-		thro=thro+rudd*params.yaw_p;
+		if(position)
+			thro=thro+rudd*params.yaw_p*params.yaw_scale;
+		else
+			thro=thro+rudd*params.yaw_p;
 	}
 	
 	pwmOut[0]=(left+1)/2;
@@ -228,6 +236,10 @@ void UpdateFlight(void)
 				dir=1;
 			else
 				dir=-1;
+			if(SW2)
+				position=0;
+			else
+				position=1;
 			LEDFlash(2);
 		}
 	}

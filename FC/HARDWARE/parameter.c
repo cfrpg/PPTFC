@@ -50,6 +50,7 @@ void ParamReset(void)
 	params.aile=0.8f;
 	params.elev=0.6f;
 	params.phi=0.3f;
+	params.yaw_scale=1;
 	params.tailFlag=0xFCFC;
 }
 
@@ -96,6 +97,9 @@ u8 ParamSet(u8 id,s32 v)
 		case 7:
 			params.phi=paramReadFixed(v,5);
 		break;
+		case 8:
+			params.yaw_scale=paramReadFixed(v,5);
+		break;
 	}
 	return ParamWrite();
 }
@@ -110,4 +114,6 @@ void ParamShow(void)
 	printf("#5:aile_mix:%f\r\n",params.aile);
 	printf("#6:elev_mix:%f\r\n",params.elev);
 	printf("#7:phi_mix:%f\r\n",params.phi);
+	printf("#8:yaw_scale:%f\r\n",params.yaw_scale);
+	printf("Param end.\r\n");
 }
