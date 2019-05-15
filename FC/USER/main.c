@@ -10,6 +10,7 @@
 #include "key.h"
 #include "adc.h"
 #include "pid.h"
+#include "rtc.h"
 
 void Init(void);
 void UpdateFlight(void);
@@ -53,6 +54,7 @@ int main(void)
 	PWMInit();
 	KeyInit();
 	ADCInit();
+	RTCInit();
 	
 	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 	printf("PPT FC\r\n");
@@ -80,7 +82,7 @@ int main(void)
 
 	while(1)
 	{		
-		if(tick[3]>10)
+		if(tick[3]>=10)
 		{
 			float phi=ADCReadVol();
 			phi=params.phi_k*phi+params.phi_b;
@@ -89,7 +91,7 @@ int main(void)
 			PIDCalc(&phiPID,-phi,dt);			
 		}
 		//LED
-		if(tick[0]>ledInterval)
+		if(tick[0]>=ledInterval)
 		{				
 			if(ledFlash)
 			{
@@ -102,7 +104,7 @@ int main(void)
 			}
 			tick[0]=0;
 		}
-		if(tick[1]>500)
+		if(tick[1]>=500)
 		{
 			
 			tick[1]=0;	
@@ -112,10 +114,12 @@ int main(void)
 				AnalyzePkg();
 				USART_RX_STA=0;
 			}
+			
+			
 			//printf("%f %d\r\n",pwmOut[1],pwmState[1].value);
 		}
 		//main work
-		if(tick[2]>20)
+		if(tick[2]>=20)
 		{
 			tick[2]=0;	
 			keyState<<=1;
@@ -394,8 +398,5 @@ void TIM2_IRQHandler(void)
 		{
 			tick[n]++;
 		}
-		cpucnt++;
-		if(cpucnt>1000)
-			cpucnt=0;
 	}
 }

@@ -597,6 +597,26 @@
               <FileType>5</FileType>
               <FilePath>..\HARDWARE\pid.h</FilePath>
             </File>
+            <File>
+              <FileName>sblink.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\sblink.c</FilePath>
+            </File>
+            <File>
+              <FileName>sblink.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\sblink.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\rtc.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\rtc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
