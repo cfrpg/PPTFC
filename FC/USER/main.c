@@ -84,11 +84,13 @@ int main(void)
 	{		
 		if(tick[3]>=10)
 		{
+			
 			float phi=ADCReadVol();
 			phi=params.phi_k*phi+params.phi_b;
 			float dt=tick[3]/1000.0;
 			tick[3]=0;
-			PIDCalc(&phiPID,-phi,dt);			
+			PIDCalc(&phiPID,-phi,dt);		
+				
 		}
 		//LED
 		if(tick[0]>=ledInterval)
@@ -114,8 +116,9 @@ int main(void)
 				AnalyzePkg();
 				USART_RX_STA=0;
 			}
-			
-			
+			if(position)
+				printf("%f\r\n",ADCReadVol());
+				
 			//printf("%f %d\r\n",pwmOut[1],pwmState[1].value);
 		}
 		//main work
@@ -131,6 +134,7 @@ int main(void)
 				case 1:UpdateCali();break;
 				case 2:UpdateESCCali();break;
 			}
+			
 		}		
 	}
 }
@@ -202,10 +206,10 @@ void UpdateFlight(void)
 
 	if(thro>0.05)
 	{
-		if(dir<0)
-			thro=thro+rudd*params.yaw_p*params.yaw_scale;
+		if(position)
+			thro=thro-dir*rudd*params.yaw_p*params.yaw_scale;
 		else
-			thro=thro-rudd*params.yaw_p*params.yaw_scale;
+			thro=thro-dir*rudd*params.yaw_p;
 	}
 	
 	pwmOut[0]=(left+1)/2;
