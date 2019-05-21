@@ -200,12 +200,12 @@ void UpdateFlight(void)
 		right=-1;
 	left=-right;
 
-	if(thro>0)
+	if(thro>0.05)
 	{
-		if(position)
+		if(dir<0)
 			thro=thro+rudd*params.yaw_p*params.yaw_scale;
 		else
-			thro=thro+rudd*params.yaw_p;
+			thro=thro-rudd*params.yaw_p*params.yaw_scale;
 	}
 	
 	pwmOut[0]=(left+1)/2;
