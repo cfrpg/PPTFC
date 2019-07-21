@@ -49,9 +49,9 @@ Section Cross References
     main.o(i.UpdateFlight) refers to d2f.o(x$fpl$d2f) for __aeabi_d2f
     main.o(i.UpdateFlight) refers to fflt_clz.o(x$fpl$fflt) for __aeabi_i2f
     main.o(i.UpdateFlight) refers to fmul.o(x$fpl$fmul) for __aeabi_fmul
+    main.o(i.UpdateFlight) refers to faddsub_clz.o(x$fpl$fsub) for __aeabi_fsub
     main.o(i.UpdateFlight) refers to faddsub_clz.o(x$fpl$fadd) for __aeabi_fadd
     main.o(i.UpdateFlight) refers to faddsub_clz.o(x$fpl$frsb) for __aeabi_frsub
-    main.o(i.UpdateFlight) refers to faddsub_clz.o(x$fpl$fsub) for __aeabi_fsub
     main.o(i.UpdateFlight) refers to frleqf.o(x$fpl$frleqf) for __aeabi_cfrcmple
     main.o(i.UpdateFlight) refers to fleqf.o(x$fpl$fleqf) for __aeabi_cfcmple
     main.o(i.UpdateFlight) refers to f2d.o(x$fpl$f2d) for __aeabi_f2d
@@ -2163,36 +2163,36 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       300         24          0          0          0       1987   adc.o
+       300         24          0          0          0       1891   adc.o
          0          0          0          0          0         32   core_cm3.o
-       144         22          0          4          0       1116   delay.o
-        44          4          0          0          0        438   key.o
-       216         44          0          1          0       1993   led.o
-      3100        632          0         22         80     262282   main.o
-       172         22          0          0          0     214437   misc.o
-       766        234          0          0         48       4946   parameter.o
-       408         14          0          0          0       1643   pid.o
-       436         20          0          0          0       1131   pwm.o
-       564         30          0          0         64       3347   pwmin.o
-       140         12          0          0          0        590   rtc.o
-       332         68          0          8        768       1706   sblink.o
-        64         26        236          0       1536        788   startup_stm32f10x_md.o
-       528         30          0          0          0       9401   stm32f10x_adc.o
-       274         30          0          0          0       3258   stm32f10x_flash.o
-       278          0          0          0          0       2024   stm32f10x_gpio.o
-        26          0          0          0          0       3574   stm32f10x_it.o
-        12          6          0          0          0        486   stm32f10x_pwr.o
-       504         70          0         20          0       8138   stm32f10x_rcc.o
-       188         36          0          0          0       3373   stm32f10x_rtc.o
-      1910        200          0          0          0      20591   stm32f10x_tim.o
-       594         28          0          0          0       6131   stm32f10x_usart.o
-        12          0          0          0          0        429   sys.o
-       328         28          0         20          0       2125   system_stm32f10x.o
-        94          0          0          0          0        500   timer.o
-       340         24          0          6        200       4016   usart.o
+       144         22          0          4          0       1036   delay.o
+        44          4          0          0          0        414   key.o
+       216         44          0          1          0       1869   led.o
+      3100        632          0         22         80     261826   main.o
+       172         22          0          0          0     214237   misc.o
+       766        234          0          0         48       4674   parameter.o
+       408         14          0          0          0       1559   pid.o
+       436         20          0          0          0       1083   pwm.o
+       564         30          0          0         64       3155   pwmin.o
+       140         12          0          0          0        566   rtc.o
+       332         68          0          8        768       1618   sblink.o
+        64         26        236          0       1536        764   startup_stm32f10x_md.o
+       528         30          0          0          0       9033   stm32f10x_adc.o
+       274         30          0          0          0       3106   stm32f10x_flash.o
+       278          0          0          0          0       1968   stm32f10x_gpio.o
+        26          0          0          0          0       3338   stm32f10x_it.o
+        12          6          0          0          0        458   stm32f10x_pwr.o
+       504         70          0         20          0       7822   stm32f10x_rcc.o
+       188         36          0          0          0       3185   stm32f10x_rtc.o
+      1910        200          0          0          0      19655   stm32f10x_tim.o
+       594         28          0          0          0       5931   stm32f10x_usart.o
+        12          0          0          0          0        405   sys.o
+       328         28          0         20          0       2001   system_stm32f10x.o
+        94          0          0          0          0        476   timer.o
+       340         24          0          6        200       3836   usart.o
 
     ----------------------------------------------------------------------
-     11800       1604        268         88       2696     560482   Object Totals
+     11800       1604        268         88       2696     555938   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         26          0          0          7          0          0   (incl. Padding)
 
@@ -2284,8 +2284,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     19676       2076        444         88       2792     555718   Grand Totals
-     19676       2076        444         88       2792     555718   ELF Image Totals
+     19676       2076        444         88       2792     551174   Grand Totals
+     19676       2076        444         88       2792     551174   ELF Image Totals
      19676       2076        444         88          0          0   ROM Totals
 
 ==============================================================================

@@ -197,18 +197,18 @@ void UpdateFlight(void)
 	if(pwmState[3].value!=0)
 		thro=(pwmState[3].value-1000)/1000.0;
 	
-	right=elev*params.elev+dir*aile*params.aile;	
+	right=elev*params.elev-dir*aile*params.aile;	
 	left=-right;	
 	
 	if(dir>0)
 	{
-		right-=phiPID.out*params.phi*(1+params.yaw_scale);
-		left-=phiPID.out*params.phi*(1-params.yaw_scale);
+		right+=phiPID.out*params.phi*(1+params.yaw_scale);
+		left+=phiPID.out*params.phi*(1-params.yaw_scale);
 	}
 	else
 	{
-		right+=phiPID.out*params.phi*(1-params.yaw_scale);
-		left+=phiPID.out*params.phi*(1+params.yaw_scale);
+		right-=phiPID.out*params.phi*(1-params.yaw_scale);
+		left-=phiPID.out*params.phi*(1+params.yaw_scale);
 	}
 	if(right>1)
 		right=1;
