@@ -49,12 +49,12 @@ void PWMSet(float out[4])
 	else
 		TIM_SetCompare1(TIM4,(u16)(out[0]*1000+1000));
 	if(out[1]<0)
-		TIM_SetCompare2(TIM4,900);
+		TIM_SetCompare2(TIM4,900/8);
 	else
 		TIM_SetCompare2(TIM4,(u16)(out[1]*1000+1000));
 	if(out[2]<0)
 		TIM_SetCompare3(TIM4,900);
-	else
+	else		
 		TIM_SetCompare3(TIM4,(u16)(out[2]*1000+1000));
 	if(out[3]<0)
 		TIM_SetCompare4(TIM4,900);

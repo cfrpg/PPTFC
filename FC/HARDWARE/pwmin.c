@@ -16,6 +16,7 @@ void PWMInInit(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	
 	gi.GPIO_Pin=GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11;
+	
 	gi.GPIO_Mode=GPIO_Mode_IPD;
 	gi.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&gi);

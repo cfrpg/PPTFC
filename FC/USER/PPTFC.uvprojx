@@ -136,7 +136,7 @@
             <Capability>1</Capability>
             <DriverSelection>4101</DriverSelection>
           </Flash1>
-          <bUseTDR>0</bUseTDR>
+          <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
@@ -616,6 +616,76 @@
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\gps.c</FilePath>
+            </File>
+            <File>
+              <FileName>gps.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\gps.h</FilePath>
+            </File>
+            <File>
+              <FileName>hmc5883.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\hmc5883.h</FilePath>
+            </File>
+            <File>
+              <FileName>hmc5883.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\hmc5883.c</FilePath>
+            </File>
+            <File>
+              <FileName>mb85rs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\mb85rs.c</FilePath>
+            </File>
+            <File>
+              <FileName>mb85rs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\mb85rs.h</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\i2c.h</FilePath>
+            </File>
+            <File>
+              <FileName>ms4525do.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ms4525do.c</FilePath>
+            </File>
+            <File>
+              <FileName>ms4525do.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\ms4525do.h</FilePath>
+            </File>
+            <File>
+              <FileName>sdp3x.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\sdp3x.h</FilePath>
+            </File>
+            <File>
+              <FileName>sdp3x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\sdp3x.c</FilePath>
+            </File>
+            <File>
+              <FileName>tle493d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\tle493d.c</FilePath>
+            </File>
+            <File>
+              <FileName>tle493d.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\tle493d.h</FilePath>
             </File>
           </Files>
         </Group>
