@@ -10,14 +10,14 @@ void TLE493DInit(u8 id,u8 addr)
 	//Set Config
 	TLE493DWriteReg(id,addr,TLE493D_TRIG_NO,TLE493D_CONFIG,0b00101001);
 	//TLE493DWriteReg(id,addr,TLE493D_TRIG_NO,TLE493D_MOD2,0b00011111);
-	TLE493DWriteReg(id,addr,TLE493D_TRIG_WRITE,TLE493D_MOD1,0b00000111);	
+	TLE493DWriteReg(id,addr,TLE493D_TRIG_NO,TLE493D_MOD1,0b00010011);	
 	I2CStart(id);
 	I2CSendByte(id,addr+1);
 	I2CWaitAck(id);
 	I2CSendByte(id,TLE493D_TRIG_NO|TLE493D_MOD1);
 	I2CWaitAck(id);
 	u8 b=I2CReadByte(id);
-	printf("0x%x\r\n",b);
+	//printf("0x%x\r\n",b);
 }
 
 void TLE493DReset(u8 id,u8 addr)
@@ -42,9 +42,11 @@ void TLE493DReadout(u8 id,u8 addr,u8 n,s16 data[])
 	u8 byte[6];
 	u8 i;
 	I2CStart(id);
+//	I2CSendByte(id,addr+1);
+//	I2CWaitAck(id);
+//	I2CSendByte(id,TLE493D_TRIG_05|TLE493D_BX);
+//	I2CWaitAck(id);
 	I2CSendByte(id,addr+1);
-	I2CWaitAck(id);
-	I2CSendByte(id,TLE493D_TRIG_05|TLE493D_BX);
 	I2CWaitAck(id);
 	byte[0]=I2CReadByte(id);
 	for(i=1;i<6;i++)
@@ -71,7 +73,7 @@ void TLE493DReadout(u8 id,u8 addr,u8 n,s16 data[])
 		if(byte[i]&0x80)
 			data[i]|=0xF000;
 	}
-	printf("%d %d %d %d\r\n",data[0],data[1],data[2],data[3]);
+	
 }
 
 void TLE493DWriteReg(u8 id,u8 addr,u8 trig,u8 reg,u8 val)

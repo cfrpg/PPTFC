@@ -5,7 +5,10 @@ u8 i2c_init_flag;
 
 void i2cDelay(void)
 {
-	delay_us(4);
+	//delay_us(1);
+	//u8 i=2;
+	//while(i--);
+	__NOP();
 }
 
 void i2cStart1(void)
@@ -278,14 +281,14 @@ void i2cSendByte3(u8 b)
 			I2C3_SDA_OUT=1;
 		else
 			I2C3_SDA_OUT=0;
-		i2cDelay();
+		//i2cDelay();
 		I2C3_SCL_OUT=1;
 		i2cDelay();
 		I2C3_SCL_OUT=0;
 		if(i==7)
 			I2C3_SDA_OUT=1;
 		b<<=1;
-		i2cDelay();
+		//i2cDelay();
 	}
 }
 
@@ -298,9 +301,11 @@ u8 i2cReadByte3(void)
 		res<<=1;
 		I2C3_SCL_OUT=1;
 		i2cDelay();
+		//__NOP();
 		if(I2C3_SDA_IN)
 			res|=1;
 		I2C3_SCL_OUT=0;
+		i2cDelay();
 		i2cDelay();
 	}
 	return res;

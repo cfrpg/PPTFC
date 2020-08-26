@@ -13,6 +13,8 @@
 #include "pwm.h"
 #include "sdp3x.h"
 #include "tle493d.h"
+#include "adc.h"
+#include "tle493d_hw.h"
 
 void AnalyzePkg(void);
 
@@ -44,7 +46,7 @@ int main(void)
 	u16 ct;
 	
 	u16 tmp16[4];
-	s16 stmp16[3];
+	s16 stmp16[4];
 	u32 cnt=0;
 	//s32 tlon=0;
 	delay_init();
@@ -54,6 +56,7 @@ int main(void)
 	LEDInit();
 	//GPSInit(9600);
 	//FRAMInit();
+	ADCInit();
 	
 	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 	printf("PPT FC\r\n");
@@ -86,7 +89,9 @@ int main(void)
 //		delay_ms(500);
 //	}
 //	printf("t,state,temp,dp1,dp2,dp3,\r\n");
-	TLE493DInit(2,TLE493D_ADDR1);
+	TLE493DInit(3,TLE493D_ADDR1);
+	//TLE493DHWInit(TLE493D_ADDR1);
+	
 	while(1)
 	{			
 		//LED
@@ -129,17 +134,25 @@ int main(void)
 			//printf("%d,%d\r\n",stmp16[0],stmp16[1]);
 			//printf("%d\r\n",tick[2]);
 			//printf("%f %d\r\n",pwmOut[1],pwmState[1].value);
-			TLE493DReadout(2,TLE493D_ADDR1,4,tmp16);
+			TLE493DReadout(3,TLE493D_ADDR1,4,stmp16);
+			//TLE493DReadout(2,TLE493D_ADDR1,4,stmp16);
+//			ct=ADCReadFiltered(0);
+//			printf("%d,",ct);
+//			ct=ADCReadFiltered(1);
+//			printf("%d,\r\n",ct);
+						
+			printf("%d,%d,%d,%d,%d,\r\n",ct,stmp16[0],stmp16[1],stmp16[2],stmp16[3]);
 		}
 		//main work
-//		if(tick[2]>=20)
-//		{
-//			if(gpsReady)
-//			{
-//				//printf("%s",gpsBuff[gpsCurrBuff]);
-//				gpsReady=0;
-//			}
-//		}		
+		if(tick[2]>=20)
+		{
+			if(gpsReady)
+			{
+				//printf("%s",gpsBuff[gpsCurrBuff]);
+				gpsReady=0;
+			}
+			
+		}		
 	}
 }
 

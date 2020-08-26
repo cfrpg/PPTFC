@@ -687,6 +687,16 @@
               <FileType>5</FileType>
               <FilePath>..\HARDWARE\tle493d.h</FilePath>
             </File>
+            <File>
+              <FileName>tle493d_hw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\tle493d_hw.c</FilePath>
+            </File>
+            <File>
+              <FileName>tle493d_hw.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\tle493d_hw.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -8,7 +8,7 @@ void ADCInit(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_ADC1,ENABLE);
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 	
-	gi.GPIO_Pin=GPIO_Pin_1;
+	gi.GPIO_Pin=GPIO_Pin_1|GPIO_Pin_0;
 	gi.GPIO_Mode=GPIO_Mode_AIN;
 	GPIO_Init(GPIOB,&gi);
 	
@@ -26,33 +26,37 @@ void ADCInit(void)
 	while(ADC_GetResetCalibrationStatus(ADC1));
 	ADC_StartCalibration(ADC1);
 	while(ADC_GetCalibrationStatus(ADC1));
+	ADC_RegularChannelConfig(ADC1,8,1,ADC_SampleTime_239Cycles5);
 	ADC_RegularChannelConfig(ADC1,9,1,ADC_SampleTime_239Cycles5);
 	
 }
 
-u16 ADCRead(void)
+u16 ADCRead(u8 ch)
 {	
 	ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
-	ADC_RegularChannelConfig(ADC1,9,1,ADC_SampleTime_239Cycles5);
+	if(ch==0)
+		ADC_RegularChannelConfig(ADC1,8,1,ADC_SampleTime_239Cycles5);
+	else
+		ADC_RegularChannelConfig(ADC1,9,1,ADC_SampleTime_239Cycles5);
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);
 	while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC));
 	return ADC_GetConversionValue(ADC1);
 }
 
-u16 ADCReadFiltered(void)
+u16 ADCReadFiltered(u8 ch)
 {
 	u32 res=0;
 	u8 i;
 	for(i=0;i<64;i++)
 	{
-		res+=ADCRead();
+		res+=ADCRead(ch);
 	}
 	return res>>6;
 }
 
-float ADCReadVol(void)
+float ADCReadVol(u8 ch)
 {
-	return ADCReadFiltered()*3.3/4096;
+	return ADCReadFiltered(ch)*3.3/4096;
 }
 
 float ADCReadWithRef(void)
