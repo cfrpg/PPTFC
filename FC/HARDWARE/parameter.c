@@ -41,16 +41,20 @@ void ParamReset(void)
 {	
 	params.headFlag=0xCFCF;
 	params.Rev=0;
-	params.phi_k=0;
-	params.phi_b=0;
-	params.phi_p=0;
-	params.phi_i=0;
-	params.phi_d=0;
-	params.yaw_p=0.05;
-	params.aile=0.8f;
-	params.elev=0.6f;
-	params.phi=0.3f;
-	params.yaw_scale=1;
+	params.pwm_cali_flag=0;
+	params.pwm_min=1500;
+	params.pwm_max=1500;
+	params.curr_off=0;
+	params.curr_gain=10;
+	params.volt_gain=5.7;
+	params.pwr_p=0;
+	params.pwr_i=0;
+	params.pwr_d=0;
+	params.pwr_i_max=1;
+	params.curr_max=30;
+	params.power_max=200;
+	params.freq=0;
+	params.strength=0;
 	params.tailFlag=0xFCFC;
 }
 
@@ -77,28 +81,37 @@ u8 ParamSet(u8 id,s32 v)
 				params.Rev|=2;			
 		break;
 		case 1:
-			params.phi_p=paramReadFixed(v,5);
+			params.curr_off=paramReadFixed(v,5);
 		break;
 		case 2:
-			params.phi_i=paramReadFixed(v,5);
+			params.pwr_p=paramReadFixed(v,5);
 		break;
 		case 3:
-			params.phi_d=paramReadFixed(v,5);
+			params.pwr_i=paramReadFixed(v,5);
 		break;
 		case 4:
-			params.yaw_p=paramReadFixed(v,5);
+			params.pwr_d=paramReadFixed(v,5);
 		break;
 		case 5:
-			params.aile=paramReadFixed(v,5);
+			params.pwr_i_max=paramReadFixed(v,5);
 		break;
 		case 6:
-			params.elev=paramReadFixed(v,5);
+			params.curr_max=paramReadFixed(v,4);
 		break;
 		case 7:
-			params.phi=paramReadFixed(v,5);
+			params.power_max=paramReadFixed(v,3);
 		break;
 		case 8:
-			params.yaw_scale=paramReadFixed(v,5);
+			params.freq=paramReadFixed(v,4);
+		break;
+		case 9:
+			params.strength=paramReadFixed(v,4);
+		break;
+		case 10:
+			params.curr_gain=paramReadFixed(v,4);
+		break;
+		case 11:
+			params.volt_gain=paramReadFixed(v,4);
 		break;
 	}
 	return ParamWrite();
@@ -107,13 +120,16 @@ u8 ParamSet(u8 id,s32 v)
 void ParamShow(void)
 {
 	printf("#0:Reverse:%d\r\n",params.Rev);
-	printf("#1:phi_p:%f\r\n",params.phi_p);
-	printf("#2:phi_i:%f\r\n",params.phi_i);
-	printf("#3:phi_d:%f\r\n",params.phi_d);
-	printf("#4:yaw_p:%f\r\n",params.yaw_p);
-	printf("#5:aile_mix:%f\r\n",params.aile);
-	printf("#6:elev_mix:%f\r\n",params.elev);
-	printf("#7:phi_mix:%f\r\n",params.phi);
-	printf("#8:yaw_scale:%f\r\n",params.yaw_scale);
+	printf("#1:curr_off:%f\r\n",params.curr_off);
+	printf("#2:pwr_p:%f\r\n",params.pwr_p);
+	printf("#3:pwr_i:%f\r\n",params.pwr_i);
+	printf("#4:pwr_d:%f\r\n",params.pwr_d);
+	printf("#5:pwr_i_max:%f\r\n",params.pwr_i_max);
+	printf("#6:curr_max:%f\r\n",params.curr_max);
+	printf("#7:power_max:%f\r\n",params.power_max);
+	printf("#8:freq:%f\r\n",params.freq);
+	printf("#9:strength:%f\r\n",params.strength);
+	printf("#10:curr_gain:%f\r\n",params.curr_gain);
+	printf("#11:volt_gain:%f\r\n",params.volt_gain);
 	printf("Param end.\r\n");
 }

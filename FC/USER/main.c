@@ -6,14 +6,21 @@
 #include "math.h"
 #include "parameter.h"
 #include "led.h"
-#include "gps.h"
-#include "mb85rs.h"
-#include "ms4525do.h"
-#include "i2c.h"
 #include "pwm.h"
-#include "sdp3x.h"
-#include "tle493d.h"
+#include "key.h"
+#include "adc.h"
+#include "pid.h"
+#include "rtc.h"
 
+#include "math.h"
+
+#define TwoPI 6.283185
+#define MaxThro 1.0
+
+void Init(void);
+void UpdateFlight(void);
+void UpdateCali(void);
+void UpdateESCCali(void);
 void AnalyzePkg(void);
 
 u16 tick[4]={0,0,0,0};
@@ -30,10 +37,20 @@ u8 caliNext;
 float caliTmp[3];
 
 float pwmOut[4];
-
+PIDData pwrPID;
+float ctrlTarget;
 s8 armed;
-s8 dir;
-s8 position;
+
+u8 CurrCtrl;
+u8 waveEnabled;
+
+float volt,curr;
+float dthro;
+float outThro;
+
+float waveValue;
+float waveT;
+float wavePeroid;
 
 int main(void)
 {	
@@ -43,21 +60,21 @@ int main(void)
 	
 	u16 ct;
 	
-	u16 tmp16[4];
-	s16 stmp16[3];
-	u32 cnt=0;
+	float temp;
+	
 	//s32 tlon=0;
 	delay_init();
 	NVIC_Configuration();
 	uart_init(115200);
 	
 	LEDInit();
-	//GPSInit(9600);
-	//FRAMInit();
+	PWMInit();
+	KeyInit();
+	ADCInit();
+	RTCInit();
 	
 	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 	printf("PPT FC\r\n");
-	printf("cfrpg\r\n");
 	printf("Read parameters.\r\n");
 	
 	ParamRead();
@@ -67,28 +84,72 @@ int main(void)
 		ParamWrite();
 		printf("Reset parameters.\r\n");		
 	}
+	if(params.pwm_max-params.pwm_min<500)
+	{
+		printf("RC uncalibrate.\r\n");
+	}
+	else
+	{
+		printf("RC calibrated.\r\n");
+		printf("min=%d\tmax=%d\r\n",params.pwm_min,params.pwm_max);
+	}
+	ParamShow();
 	MainClockInit();
-	PWMInInit();
-	printf("Init I2C\r\n");
-	I2CInit();
-	printf("Init Sensors\r\n");
-//	MS4525DOInit(1);
-//	MS4525DOInit(2);
-//	MS4525DOInit(3);
-	delay_ms(50);
-	Sdp3xInit(1);
-	Sdp3xSetMode(1,SDP3X_ADDR1,0x3603);
-	delay_ms(20);
-	ledInterval=500;
-//	printf("Clear Console in 5s.\r\n");
-//	for(i=0;i<10;i++)
-//	{
-//		delay_ms(500);
-//	}
-//	printf("t,state,temp,dp1,dp2,dp3,\r\n");
-	TLE493DInit(2,TLE493D_ADDR1);
+	
+	Init();
+
 	while(1)
-	{			
+	{		
+		if(tick[3]>=10)
+		{			
+			
+			volt=ADCReadVol(1)*params.volt_gain;
+			curr=ADCReadVol(0)*params.curr_gain;
+			if(armed>0)
+			{	
+				float dt=tick[3]/1000.0;
+				if(waveEnabled)
+				{
+					waveValue=(1+sin(TwoPI*params.freq*waveT)*params.strength);
+					temp=ctrlTarget*waveValue;
+					
+					waveT+=dt;
+					if(waveT>wavePeroid)
+					{
+						waveT-=wavePeroid;
+					}
+				}
+				else
+				{
+					temp=ctrlTarget;
+				}
+				
+				if(CurrCtrl)
+				{
+					PIDCalc(&pwrPID,temp-curr,dt);
+				}
+				else
+				{
+					PIDCalc(&pwrPID,temp-curr*volt,dt);
+				}
+				dthro=pwrPID.out;
+				outThro+=dthro*dt;
+				if(outThro>MaxThro)
+					outThro=MaxThro;
+				if(outThro<0)
+				{
+					outThro=0;
+					if(dthro<0)
+						dthro=0;
+				}
+			}
+//			float phi=ADCReadVol();
+//			phi=params.phi_k*phi+params.phi_b;
+//			
+			tick[3]=0;
+//			PIDCalc(&phiPID,-phi,dt);		
+				
+		}
 		//LED
 		if(tick[0]>=ledInterval)
 		{				
@@ -105,8 +166,7 @@ int main(void)
 		}
 		if(tick[1]>=500)
 		{
-			//printf("%d,",tick[1]);
-			tick[2]=0;
+			
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
 			{
@@ -114,36 +174,308 @@ int main(void)
 				AnalyzePkg();
 				USART_RX_STA=0;
 			}
-			//printf("%d,",cnt++);
-//			if(pwmState[0].value>1500)
-//				printf("1,");
-//			else
-//				printf("0,");
-//			MS4525DOGetRawData(1,tmp16);
-//			printf("%d,%d,",tmp16[1],tmp16[0]);
-			//MS4525DOGetRawData(2,tmp16);
-			//printf("%d,",tmp16[0]);
-//			MS4525DOGetRawData(3,tmp16);
-//			printf("%d,\r\n",tmp16[0]);
-			//Sdp3xReadOut(1,SDP3X_ADDR1,2,stmp16);
-			//printf("%d,%d\r\n",stmp16[0],stmp16[1]);
-			//printf("%d\r\n",tick[2]);
+//			if(position)
+//				printf("%f\r\n",ADCReadVol());
+				
 			//printf("%f %d\r\n",pwmOut[1],pwmState[1].value);
-			TLE493DReadout(2,TLE493D_ADDR1,4,tmp16);
+			//printf("%f\t%f\t%f\t%f\r\n",curr*volt,ctrlTarget,pwrPID.out,outThro);
 		}
 		//main work
-//		if(tick[2]>=20)
-//		{
-//			if(gpsReady)
-//			{
-//				//printf("%s",gpsBuff[gpsCurrBuff]);
-//				gpsReady=0;
-//			}
-//		}		
+		if(tick[2]>=20)
+		{
+			//printf("state:%d\r\n",state);
+			
+			tick[2]=0;	
+			keyState<<=1;
+			keyState|=KEY;
+			keyState&=0x07;
+			switch(state)
+			{
+				case 0:UpdateFlight();break;
+				case 1:UpdateCali();break;
+				case 2:UpdateESCCali();break;
+			}
+			
+		}		
 	}
 }
 
+void clearPID()
+{
+	pwrPID.lasterr=0;	
+	pwrPID.err=0;
+	pwrPID.integral=0;
+	pwrPID.derivate=0;
+	dthro=0;
+	outThro=0;
+	waveT=0;
+	waveValue=0;
+	if(params.freq>0.01)		
+		wavePeroid=1/params.freq;
+	else
+		wavePeroid=100000;
+}
 
+void readSW12(void)
+{
+	if(SW1)
+		CurrCtrl=0;
+	else
+		CurrCtrl=1;
+	if(SW2)
+		waveEnabled=0;
+	else
+		waveEnabled=1;
+	if(CurrCtrl)
+	{
+		volt=ADCReadVol(1)*params.volt_gain;
+		pwrPID.P=params.pwr_p/volt;
+		pwrPID.I=params.pwr_i/volt;
+		pwrPID.D=params.pwr_d/volt;
+		
+	}
+	else
+	{
+		pwrPID.P=params.pwr_p;
+		pwrPID.I=params.pwr_i;
+		pwrPID.D=params.pwr_d;
+	}
+	pwrPID.maxint=params.pwr_i_max;	
+	clearPID();
+}
+
+void Init(void)
+{
+	u8 i;
+	keyState=0;
+	state=0;
+	ledInterval=1000;
+	ledFlash=0;
+	
+	for(i=0;i<3;i++)
+	{
+		pwmOut[i]=0;
+	}
+	pwmOut[3]=-1;
+	
+	pwrPID.P=params.pwr_p;
+	pwrPID.I=params.pwr_i;
+	pwrPID.D=params.pwr_d;
+	pwrPID.lpf=0.5;
+	pwrPID.maxint=params.pwr_i_max;
+	pwrPID.maxout=10;
+	pwrPID.minout=-10;
+	pwrPID.lasterr=0;
+	pwrPID.tau=0.01;
+	pwrPID.err=0;
+	pwrPID.integral=0;
+	pwrPID.derivate=0;
+	
+	armed=-1;
+	
+	volt=0;
+	curr=0;
+	
+	readSW12();
+}
+
+void UpdateFlight(void)
+{
+	float left,right;
+	float aile=0,elev=0,rudd=0,thro=-1;
+	float out;
+//	if(pwmState[3].value<1000)
+//		armed--;
+//	else
+//		armed=10;
+	
+		
+//	if(pwmState[0].value!=0)
+//		aile=(pwmState[0].value-1500)/500.0;	
+//	if(pwmState[1].value!=0)
+//		elev=(pwmState[1].value-1500)/500.0;
+//	if(pwmState[2].value!=0)
+//		rudd=(pwmState[2].value-1500)/500.0;
+	if(pwmState[3].value!=0)
+		thro=(float)(pwmState[3].value-params.pwm_min)/(params.pwm_max-params.pwm_min);
+	if(armed>=0&&thro>0.1)
+	{
+		armed=1;
+		if(CurrCtrl)
+		{
+			ctrlTarget=(thro-0.1)/0.9*params.curr_max;
+		}
+		else
+		{
+			ctrlTarget=(thro-0.1)/0.9*params.power_max;
+		}
+	}
+	
+	//out=pwrPID.out;
+	out=outThro;
+	//out=thro*waveValue;
+	//printf("pwm:%d,thro:%f,tgt:%f\r\n",pwmState[3].value,thro,ctrlTarget);
+	//printf("%f\t%f\t%f\r\n",volt,curr,out);
+	if(keyState==0x04)
+	{
+		if(SW3==0&&SW4==0)
+		{
+			//PWM IN CALI
+			pwmOut[0]=0;
+			pwmOut[1]=0;
+			pwmOut[2]=0;
+			pwmOut[3]=0;
+			armed=0;
+			
+			state=1;
+			ledInterval=500;
+			subState=0;
+			caliCnt=0;
+			caliNext=0;
+			caliTmp[0]=0;
+			caliTmp[1]=0;
+			caliTmp[2]=0;
+			printf("Start RC Cali.\r\n");
+		}
+		if(SW3==1&&SW4==0)
+		{
+			state=2;
+			subState=0;
+			printf("Start ESC Cali.\r\n");
+		}
+		if(SW3==1&&SW4==1)
+		{
+			readSW12();
+			printf("Status\r\n");
+			printf("volt:%f\tcurr:%f\r\n",volt,curr);
+			if(CurrCtrl)
+				printf("Current control.\r\n");
+			else
+				printf("Power control.\r\n");
+			if(waveEnabled)
+				printf("Wave enabled.\r\n");
+			else
+				printf("Wave disabled.\r\n");
+			LEDFlash(2);
+		}
+	}
+	if(armed<0)
+	{
+		//Start up
+		if(thro<0.05)
+			armed=0;
+	}
+	if(armed>0)
+	{
+		if(thro<0.1)
+		{
+			armed=0;
+			clearPID();
+		}
+	}
+	
+	//	pwmOut[0]=(left+1)/2;
+//	pwmOut[1]=(right+1)/2;
+//	pwmOut[2]=0.5;
+//	pwmOut[3]=thro;
+	pwmOut[0]=out;
+	pwmOut[1]=out;
+	pwmOut[2]=out;
+	pwmOut[3]=out;
+	if(armed<=0)
+	{
+		ctrlTarget=0;
+		pwmOut[0]=0;
+		pwmOut[1]=0;
+		pwmOut[2]=0;
+		pwmOut[3]=0;
+	}
+	PWMSet(pwmOut);
+}
+
+void UpdateCali(void)
+{	
+	float sum=0,tf;
+	if(subState==0)
+	{
+		ledFlash=caliNext+1;
+		if(keyState==0x04)
+		{
+			subState=1;
+			ledFlash=0;
+			ledInterval=100;
+			caliCnt=0;
+			caliTmp[caliNext]=0;
+		}
+	}
+	else if(subState==1)
+	{
+		if(caliCnt>=100)
+		{
+			caliTmp[caliNext]/=caliCnt;
+			caliNext++;
+			if(caliNext<2)
+			{
+				subState=0;
+				ledInterval=500;
+			}
+			else
+			{
+				LEDSet(0);
+				params.pwm_min=(s32)caliTmp[0];
+				params.pwm_max=(s32)caliTmp[1];
+				ParamWrite();
+				
+				state=0;
+				ledInterval=1000;
+				ledFlash=0;
+				printf("Cali complete:\r\n");
+				printf("Vol:%f %f\r\n",caliTmp[0],caliTmp[1]);
+				printf("min=%d\tmax=%d\r\n",params.pwm_min,params.pwm_max);
+			}
+		}
+		caliTmp[caliNext]+=pwmState[3].value;
+		caliCnt++;
+	}
+
+}
+
+void UpdateESCCali(void)
+{
+	if(subState==0)
+	{
+		ledInterval=1000;
+		ledFlash=1;
+		pwmOut[0]=1;
+		pwmOut[1]=1;
+		pwmOut[2]=1;
+		pwmOut[3]=1;
+		PWMSet(pwmOut);
+		if(keyState==0x04)
+		{
+			subState=1;
+			printf("ESC Cali 2.\r\n");
+		}
+	}
+	else if(subState==1)
+	{
+		ledInterval=1000;
+		ledFlash=2;
+		pwmOut[0]=0;
+		pwmOut[1]=0;
+		pwmOut[2]=0;
+		pwmOut[3]=0;
+		PWMSet(pwmOut);
+		if(keyState==0x04)
+		{
+			subState=0;
+			state=0;
+			ledInterval=1000;
+			ledFlash=0;
+			printf("ESC Cali complete.\r\n");
+		}
+	}
+}
 
 void AnalyzePkg(void)
 {

@@ -25,6 +25,6 @@ void PIDCalc(PIDData *pid,float err,float dt)
 	
 	if(pid->I>1e-5||pid->I<-1e-5)
 		pid->I+=dt/pid->I*(u-u0);
-	
+	pid->lasterr=err;
 	pid->out=u;
 }
