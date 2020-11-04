@@ -93,7 +93,7 @@ u8 ParamSet(u8 id,s32 v)
 			params.pwr_d=paramReadFixed(v,5);
 		break;
 		case 5:
-			params.pwr_i_max=paramReadFixed(v,5);
+			params.pwr_i_max=paramReadFixed(v,4);
 		break;
 		case 6:
 			params.curr_max=paramReadFixed(v,4);

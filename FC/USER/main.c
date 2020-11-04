@@ -110,7 +110,11 @@ int main(void)
 				float dt=tick[3]/1000.0;
 				if(waveEnabled)
 				{
-					waveValue=(1+sin(TwoPI*params.freq*waveT)*params.strength);
+					//waveValue=(1+sin(TwoPI*params.freq*waveT)*params.strength);
+					if(waveT>wavePeroid/2)
+						waveValue=1+params.strength;
+					else
+						waveValue=1-params.strength;
 					temp=ctrlTarget*waveValue;
 					
 					waveT+=dt;
@@ -132,8 +136,10 @@ int main(void)
 				{
 					PIDCalc(&pwrPID,temp-curr*volt,dt);
 				}
+				//temp=dthro;
 				dthro=pwrPID.out;
-				outThro+=dthro*dt;
+				//outThro+=(dthro+temp)/2*dt;
+				outThro=dthro;
 				if(outThro>MaxThro)
 					outThro=MaxThro;
 				if(outThro<0)
@@ -179,6 +185,7 @@ int main(void)
 				
 			//printf("%f %d\r\n",pwmOut[1],pwmState[1].value);
 			//printf("%f\t%f\t%f\t%f\r\n",curr*volt,ctrlTarget,pwrPID.out,outThro);
+			//printf("%f %f\r\n",pwrPID.integral,pwrPID.out);
 		}
 		//main work
 		if(tick[2]>=20)
@@ -195,7 +202,7 @@ int main(void)
 				case 1:UpdateCali();break;
 				case 2:UpdateESCCali();break;
 			}
-			
+			//printf("%f,%f,\r\n",temp,curr*volt);
 		}		
 	}
 }
@@ -229,9 +236,9 @@ void readSW12(void)
 	if(CurrCtrl)
 	{
 		volt=ADCReadVol(1)*params.volt_gain;
-		pwrPID.P=params.pwr_p/volt;
-		pwrPID.I=params.pwr_i/volt;
-		pwrPID.D=params.pwr_d/volt;
+		pwrPID.P=params.pwr_p*volt;
+		pwrPID.I=params.pwr_i*volt;
+		pwrPID.D=params.pwr_d*volt;
 		
 	}
 	else
@@ -263,8 +270,8 @@ void Init(void)
 	pwrPID.D=params.pwr_d;
 	pwrPID.lpf=0.5;
 	pwrPID.maxint=params.pwr_i_max;
-	pwrPID.maxout=10;
-	pwrPID.minout=-10;
+	pwrPID.maxout=0.5;
+	pwrPID.minout=0;
 	pwrPID.lasterr=0;
 	pwrPID.tau=0.01;
 	pwrPID.err=0;

@@ -23,8 +23,9 @@ void PIDCalc(PIDData *pid,float err,float dt)
 	u0=pid->P*pid->err+pid->I*pid->integral+pid->D*pid->derivate;
 	u=PIDSat(u0,pid->minout,pid->maxout);
 	
-	if(pid->I>1e-5||pid->I<-1e-5)
-		pid->I+=dt/pid->I*(u-u0);
+//	if(pid->I>1e-5||pid->I<-1e-5)
+//		pid->integral+=dt/pid->I*(u-u0);
+	
 	pid->lasterr=err;
 	pid->out=u;
 }

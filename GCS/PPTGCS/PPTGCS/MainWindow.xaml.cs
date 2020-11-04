@@ -39,7 +39,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 2, Name = "pwr_p", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 3, Name = "pwr_i", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 4, Name = "pwr_d", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 5, Name = "pwr_i_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 5, Name = "pwr_i_max", Type = 4, Value = 0 });
 			parameters.Add(new Parameter() { ID = 6, Name = "curr_max", Type = 4, Value = 0 });
 			parameters.Add(new Parameter() { ID = 7, Name = "power_max", Type = 3, Value = 0 });
 			parameters.Add(new Parameter() { ID = 8, Name = "freq", Type = 4, Value = 0 });
