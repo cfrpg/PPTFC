@@ -28,6 +28,9 @@ double cpgam;
 double cpgThrustT;
 double cpgpdt;
 
+double cpgmaxam;
+double cpgmaxbias;
+
 double cpgdt2;		//dt*dt
 double cpgdt2F;		//dt*dt*F
 double cpgdt2k2m;	//dt*dt*k-2*m
@@ -38,8 +41,8 @@ void CPGInit(void)
 {
 	u8 i;
 	cpgdt=1.0/params.pwm_rate/params.scale_ratio;
-	
-	cpgam=20*params.scale_ratio;
+	//printf("%f\r\n",cpgdt);
+	cpgam=params.cpg_am*params.scale_ratio;
 	for(i=0;i<4;i++)
 	{
 		cm[i].am=0;
@@ -67,6 +70,9 @@ void CPGInit(void)
 	cpgThrustT=0.9;
 	cpgpdt=pi;
 	
+	cpgmaxam=params.am_max/180;
+	cpgmaxbias=params.bias_max/180;
+	
 	cpgdt2=cpgdt*cpgdt;
 	cpgdt2F=cpgdt2*cpgF;
 	cpgdt2k2m=cpgdt2*cpgk-2*cpgm;
@@ -77,13 +83,17 @@ void CPGInit(void)
 void CPGUpdate(void)
 {
 	s8 i,j;
+//	
+//	double roll=(pwmState[0].value-1500)/500.0;
+//	double pitch=(pwmState[1].value-1500)/500.0;
+//	double thro=(pwmState[2].value-1000)/1000.0;
+//	double yaw=(pwmState[3].value-1500)/500.0;
 	
-	double roll=(pwmState[0].value-1500)/500.0;
-	double pitch=(pwmState[1].value-1500)/500.0;
-	double thro=(pwmState[2].value-1000)/1000.0;
-	double yaw=(pwmState[3].value-1500)/500.0;
+	double roll=0;
+	double pitch=0;
+	double thro=0.7;
+	double yaw=0;
 	double splitNormal=0.5*yaw+0.5;
-	
 	cpgThrust[0]=(cpgdt2*cpgF1*thro-(cpgdt2*cpgk1-2*cpgm)*cpgThrust[1]-(cpgm-0.5*cpgdt*cpgc1)*cpgThrust[2])/(cpgm+0.5*cpgc1*cpgdt);
 	cpgfre=params.freq_min+(params.freq_max-params.freq_min)*cpgThrust[0];
 		
@@ -93,15 +103,15 @@ void CPGUpdate(void)
 	cm[1].am=-roll-pitch;
 	cm[2].am=-roll+pitch;
 	cm[3].am= roll+pitch;
-	cm[0].xm=-pitch*params.bias_max;
-	cm[1].xm=pitch*params.bias_max;
-	cm[2].xm=pitch*params.bias_max;
-	cm[3].xm=-pitch*params.bias_max;
+	cm[0].xm=-pitch*cpgmaxbias;
+	cm[1].xm=pitch*cpgmaxbias;
+	cm[2].xm=pitch*cpgmaxbias;
+	cm[3].xm=-pitch*cpgmaxbias;
 	
 	for(i=0;i<4;i++)
 	{
-		cm[i].dphase=cpgdt*2*pi*cpgfre;
-		cm[i].am=(((cm[i].am*0.5)*params.man_adv)+cpgThrustT)*params.am_max;
+		cm[i].dphase=cpgdt*twopi*cpgfre;
+		cm[i].am=(((cm[i].am*0.5)*params.man_adv)+cpgThrustT)*cpgmaxam;
 		cm[i].mcpg[0]=(cpgdt2F*cm[i].am-cpgdt2k2m*cm[i].mcpg[1]-cpgmmdtc*cm[i].mcpg[2])/cpgmpcdt;
 		cm[i].xcpg[0]=(cpgdt2F*cm[i].xm-cpgdt2k2m*cm[i].xcpg[1]-cpgmmdtc*cm[i].xcpg[2])/cpgmpcdt;
 	}
@@ -134,8 +144,7 @@ void CPGUpdate(void)
 		sp=cm[1].phase/twopi;
 		spp=sp-(s32)sp;
 		if(spp>=0&&spp<0.25)
-		{
-			
+		{			
 			cm[1].dphase=cpgdt*(pi*cpgfre/(1-splitNormal));
 			cm[3].dphase=cm[1].dphase;			
 		}
@@ -173,4 +182,5 @@ void CPGUpdate(void)
 		cpgout[i]=(float)((cm[i].m+1)/2);
 	}
 	PWMSet(cpgout);
+	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cpgpd[0]);
 }

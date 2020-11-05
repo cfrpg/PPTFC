@@ -85,7 +85,7 @@ int main(void)
 			}
 			tick[0]=0;
 		}
-		if(tick[1]>=5000)
+		if(tick[1]>=2000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)

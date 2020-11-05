@@ -23,6 +23,7 @@ typedef struct
 	float bias_max;
 	float ratio;
 	float dead_zone;
+	float cpg_am;
 	u16 tailFlag;
 } ParameterSet;
 

@@ -43,6 +43,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 6, Name = "bias_max", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 8, Name = "dead_zone", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 9, Name = "cpg_am", Type = 3, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();
@@ -153,7 +154,7 @@ namespace PPTGCS
 				pos = lines[i].LastIndexOf(":");
 				num = lines[i].Substring(pos + 1, lines[i].Length - 1 - pos);
 				float value = float.Parse(num);
-				if (parameters[id].Type > 0)
+				if (parameters[id].Type >= 0)
 					parameters[id].Value = value;
 				else
 					parameters[id].SetBinaryValue(value);

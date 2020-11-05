@@ -49,6 +49,7 @@ void ParamReset(void)
 	params.bias_max=10;
 	params.ratio=7;
 	params.dead_zone=0.05;
+	params.cpg_am=20;
 	params.tailFlag=0xFCFC;
 }
 
@@ -92,6 +93,8 @@ u8 ParamSet(u8 id,s32 v)
 		break;
 		case 8:
 			params.dead_zone=paramReadFixed(v,5);
+		case 9:
+			params.cpg_am=paramReadFixed(v,3);
 		break;
 	}
 	return ParamWrite();
@@ -108,5 +111,6 @@ void ParamShow(void)
 	printf("#6:bias_max:%f\r\n",params.bias_max);
 	printf("#7:ratio:%f\r\n",params.ratio);
 	printf("#8:dead_zone:%f\r\n",params.dead_zone);
+	printf("#9:cpg_am:%f\r\n",params.cpg_am);
 	printf("Param end.\r\n");
 }
