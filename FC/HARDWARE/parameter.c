@@ -40,17 +40,15 @@ u8 ParamWrite(void)
 void ParamReset(void)
 {	
 	params.headFlag=0xCFCF;
-	params.Rev=0;
-	params.phi_k=0;
-	params.phi_b=0;
-	params.phi_p=0;
-	params.phi_i=0;
-	params.phi_d=0;
-	params.yaw_p=0.05;
-	params.aile=0.8f;
-	params.elev=0.6f;
-	params.phi=0.3f;
-	params.yaw_scale=1;
+	params.pwm_rate=400;
+	params.scale_ratio=5;
+	params.man_adv=0.35;
+	params.freq_min=5;
+	params.freq_max=23;
+	params.am_max=150;
+	params.bias_max=10;
+	params.ratio=7;
+	params.dead_zone=0.05;
 	params.tailFlag=0xFCFC;
 }
 
@@ -69,36 +67,31 @@ u8 ParamSet(u8 id,s32 v)
 	switch(id)
 	{
 		case 0:
-			if(v&1)
-				params.Rev=1;
-			else
-				params.Rev=0;
-			if(v>9)
-				params.Rev|=2;			
+			params.pwm_rate=v;
 		break;
 		case 1:
-			params.phi_p=paramReadFixed(v,5);
+			params.scale_ratio=paramReadFixed(v,4);
 		break;
 		case 2:
-			params.phi_i=paramReadFixed(v,5);
+			params.man_adv=paramReadFixed(v,5);
 		break;
 		case 3:
-			params.phi_d=paramReadFixed(v,5);
+			params.freq_min=paramReadFixed(v,4);
 		break;
 		case 4:
-			params.yaw_p=paramReadFixed(v,5);
+			params.freq_max=paramReadFixed(v,4);
 		break;
 		case 5:
-			params.aile=paramReadFixed(v,5);
+			params.am_max=paramReadFixed(v,3);
 		break;
 		case 6:
-			params.elev=paramReadFixed(v,5);
+			params.bias_max=paramReadFixed(v,3);
 		break;
 		case 7:
-			params.phi=paramReadFixed(v,5);
+			params.ratio=paramReadFixed(v,4);
 		break;
 		case 8:
-			params.yaw_scale=paramReadFixed(v,5);
+			params.dead_zone=paramReadFixed(v,5);
 		break;
 	}
 	return ParamWrite();
@@ -106,14 +99,14 @@ u8 ParamSet(u8 id,s32 v)
 
 void ParamShow(void)
 {
-	printf("#0:Reverse:%d\r\n",params.Rev);
-	printf("#1:phi_p:%f\r\n",params.phi_p);
-	printf("#2:phi_i:%f\r\n",params.phi_i);
-	printf("#3:phi_d:%f\r\n",params.phi_d);
-	printf("#4:yaw_p:%f\r\n",params.yaw_p);
-	printf("#5:aile_mix:%f\r\n",params.aile);
-	printf("#6:elev_mix:%f\r\n",params.elev);
-	printf("#7:phi_mix:%f\r\n",params.phi);
-	printf("#8:yaw_scale:%f\r\n",params.yaw_scale);
+	printf("#0:pwm_rate:%d\r\n",params.pwm_rate);
+	printf("#1:scale_ratio:%f\r\n",params.scale_ratio);
+	printf("#2:man_adv:%f\r\n",params.man_adv);
+	printf("#3:freq_min:%f\r\n",params.freq_min);
+	printf("#4:freq_max:%f\r\n",params.freq_max);
+	printf("#5:am_max:%f\r\n",params.am_max);
+	printf("#6:bias_max:%f\r\n",params.bias_max);
+	printf("#7:ratio:%f\r\n",params.ratio);
+	printf("#8:dead_zone:%f\r\n",params.dead_zone);
 	printf("Param end.\r\n");
 }

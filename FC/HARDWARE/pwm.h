@@ -11,9 +11,9 @@ typedef struct
 	u8 STA;	
 } TIMCCState;
 
-extern TIMCCState pwmState[4];
+extern TIMCCState pwmState[6];
 
-void PWMInit(void);
+void PWMInit(u32 freq);
 void PWMInInit(void);
 void PWMSet(float out[4]);
 

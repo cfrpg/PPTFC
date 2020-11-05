@@ -34,15 +34,15 @@ namespace PPTGCS
 		{
 			InitializeComponent();
 			parameters = new ObservableCollection<Parameter>();
-			parameters.Add(new Parameter() { ID = 0, Name = "reverse", Type = -1, Value = 0 });
-			parameters.Add(new Parameter() { ID = 1, Name = "phi_p", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 2, Name = "phi_i", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 3, Name = "phi_d", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 4, Name = "yaw_p", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 5, Name = "aile_mix", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 6, Name = "elev_mix", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 7, Name = "phi_mix", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 8, Name = "yaw_scale", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 0, Name = "pwm_rate", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 1, Name = "scale_ratio", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 2, Name = "man_adv", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 3, Name = "freq_min", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 4, Name = "freq_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 5, Name = "am_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 6, Name = "bias_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 8, Name = "dead_zone", Type = 5, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();

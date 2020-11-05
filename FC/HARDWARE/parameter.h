@@ -14,17 +14,15 @@
 typedef struct
 {
 	u16 headFlag;
-	u16 Rev;
-	float phi_k;
-	float phi_b;
-	float phi_p;
-	float phi_i;
-	float phi_d;
-	float yaw_p;
-	float aile;
-	float elev;
-	float phi;
-	float yaw_scale;
+	u32 pwm_rate;
+	float scale_ratio;
+	float man_adv;
+	float freq_min;
+	float freq_max;
+	float am_max;
+	float bias_max;
+	float ratio;
+	float dead_zone;
 	u16 tailFlag;
 } ParameterSet;
 

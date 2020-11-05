@@ -17,8 +17,8 @@ void _sys_exit(int x)
 
 int fputc(int ch, FILE *f)
 {      
-	while((USART3->SR&0X40)==0);  
-    USART3->DR = (u8) ch;      
+	while((USART1->SR&0X40)==0);  
+    USART1->DR = (u8) ch;      
 	return ch;
 } 
  
@@ -31,17 +31,19 @@ void uart_init(u32 baud)
 	NVIC_InitTypeDef ni;
 	 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);
- 	USART_DeInit(USART3);	
-    gi.GPIO_Pin = GPIO_Pin_10;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_USART1,ENABLE);
+ 	USART_DeInit(USART1);	
+    gi.GPIO_Pin = GPIO_Pin_6;
     gi.GPIO_Speed = GPIO_Speed_50MHz;
     gi.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOB, &gi);    
-    gi.GPIO_Pin = GPIO_Pin_11;
+    gi.GPIO_Pin = GPIO_Pin_7;
     gi.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOB, &gi);
   
-    ni.NVIC_IRQChannel = USART3_IRQn;
+    ni.NVIC_IRQChannel = USART1_IRQn;
 	ni.NVIC_IRQChannelPreemptionPriority=3 ;
 	ni.NVIC_IRQChannelSubPriority = 3;
 	ni.NVIC_IRQChannelCmd = ENABLE;	
@@ -54,20 +56,20 @@ void uart_init(u32 baud)
 	ui.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	ui.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-    USART_Init(USART3, &ui);
-    USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+    USART_Init(USART1, &ui);
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 	
-    USART_Cmd(USART3, ENABLE);
+    USART_Cmd(USART1, ENABLE);
 }
 
-void USART3_IRQHandler(void)
+void USART1_IRQHandler(void)
 {
 	u8 Res;
 	
-	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
+	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
-		Res =USART_ReceiveData(USART3);
-		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
+		Res =USART_ReceiveData(USART1);
+		USART_ClearITPendingBit(USART1,USART_IT_RXNE);
 		
 		if((USART_RX_STA&0x8000)==0)
 		{

@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -598,46 +598,6 @@
               <FilePath>..\HARDWARE\pid.h</FilePath>
             </File>
             <File>
-              <FileName>sblink.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\sblink.c</FilePath>
-            </File>
-            <File>
-              <FileName>sblink.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\HARDWARE\sblink.h</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\HARDWARE\rtc.h</FilePath>
-            </File>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>gps.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\gps.c</FilePath>
-            </File>
-            <File>
-              <FileName>gps.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\HARDWARE\gps.h</FilePath>
-            </File>
-            <File>
-              <FileName>hmc5883.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\HARDWARE\hmc5883.h</FilePath>
-            </File>
-            <File>
-              <FileName>hmc5883.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\hmc5883.c</FilePath>
-            </File>
-            <File>
               <FileName>mb85rs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\mb85rs.c</FilePath>
@@ -696,6 +656,16 @@
               <FileName>tle493d_hw.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\HARDWARE\tle493d_hw.h</FilePath>
+            </File>
+            <File>
+              <FileName>cpg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\cpg.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\cpg.h</FilePath>
             </File>
           </Files>
         </Group>

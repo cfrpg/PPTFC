@@ -7,7 +7,7 @@ void KeyInit(void)
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
 	
-	gi.GPIO_Pin=GPIO_Pin_5|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
+	gi.GPIO_Pin=GPIO_Pin_1;
 	gi.GPIO_Mode=GPIO_Mode_IPU;
 	gi.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB,&gi);
