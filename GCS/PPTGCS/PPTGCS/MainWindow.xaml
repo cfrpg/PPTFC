@@ -16,7 +16,11 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="consoleText" Grid.RowSpan="3" Margin="5" VerticalScrollBarVisibility="Visible"/>
+        <TextBox x:Name="consoleText" Grid.RowSpan="2" Margin="5" VerticalScrollBarVisibility="Visible"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+            <Button x:Name="clearBtn" Content="Clear" Margin="5,0" VerticalAlignment="Center" Width="50" Click="clearBtn_Click"/>
+            <Button x:Name="saveBtn" Content="Save .csv" Margin="5,0" VerticalAlignment="Center" Width="70" Click="saveBtn_Click"/>
+        </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Port:" VerticalAlignment="Center" Margin="5,0"/>
             <ComboBox x:Name="portComboBox" VerticalAlignment="Center" Margin="5,0" Width="100"/>

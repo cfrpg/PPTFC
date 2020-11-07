@@ -24,6 +24,9 @@ typedef struct
 	float ratio;
 	float dead_zone;
 	float cpg_am;
+	float yaw_scale;
+	float motor_freq_max;
+	u32 ppm_enabled;
 	u16 tailFlag;
 } ParameterSet;
 

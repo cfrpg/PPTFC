@@ -30,6 +30,7 @@ double cpgpdt;
 
 double cpgmaxam;
 double cpgmaxbias;
+double cpgmaxdphase;
 
 double cpgdt2;		//dt*dt
 double cpgdt2F;		//dt*dt*F
@@ -72,6 +73,7 @@ void CPGInit(void)
 	
 	cpgmaxam=params.am_max/180;
 	cpgmaxbias=params.bias_max/180;
+	cpgmaxdphase=cpgdt*twopi*params.motor_freq_max;
 	
 	cpgdt2=cpgdt*cpgdt;
 	cpgdt2F=cpgdt2*cpgF;
@@ -92,8 +94,8 @@ void CPGUpdate(void)
 	double roll=0;
 	double pitch=0;
 	double thro=0.7;
-	double yaw=0;
-	double splitNormal=0.5*yaw+0.5;
+	double yaw=1;
+	double splitNormal=0.5*yaw*params.yaw_scale+0.5;
 	cpgThrust[0]=(cpgdt2*cpgF1*thro-(cpgdt2*cpgk1-2*cpgm)*cpgThrust[1]-(cpgm-0.5*cpgdt*cpgc1)*cpgThrust[2])/(cpgm+0.5*cpgc1*cpgdt);
 	cpgfre=params.freq_min+(params.freq_max-params.freq_min)*cpgThrust[0];
 		
@@ -120,7 +122,7 @@ void CPGUpdate(void)
 	{		
 		double sp;
 		double spp;
-		
+				
 		//M1,M3
 		sp=cm[0].phase/twopi;
 		spp=sp-(s32)sp;
@@ -171,6 +173,9 @@ void CPGUpdate(void)
 		{
 			cm[i].mcpg[j]=cm[i].mcpg[j-1];
 			cm[i].xcpg[j]=cm[i].xcpg[j-1];
+			
+			if(cm[i].dphase>cpgmaxdphase)
+				cm[i].dphase=cpgmaxdphase;
 			cm[i].phase+=cm[i].dphase;
 		}
 		cpgThrust[j]=cpgThrust[j-1];
@@ -180,7 +185,8 @@ void CPGUpdate(void)
 	for(i=0;i<4;i++)
 	{
 		cpgout[i]=(float)((cm[i].m+1)/2);
+		//cpgout[i]=0.5;
 	}
 	PWMSet(cpgout);
-	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cpgpd[0]);
+	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cm[0].dphase);
 }

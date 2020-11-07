@@ -9,6 +9,7 @@ typedef struct
 	u16 upv;
 	u16 downv;
 	u8 STA;	
+	u8 flag;
 } TIMCCState;
 
 extern TIMCCState pwmState[6];

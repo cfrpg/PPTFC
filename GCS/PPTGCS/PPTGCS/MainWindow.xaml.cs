@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.IO;
 using System.Threading;
 
 namespace PPTGCS
@@ -44,6 +45,9 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 8, Name = "dead_zone", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 9, Name = "cpg_am", Type = 3, Value = 0 });
+			parameters.Add(new Parameter() { ID = 10, Name = "yaw_scale", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 11, Name = "motor_freq_max", Type = 3, Value = 0 });
+			parameters.Add(new Parameter() { ID = 12, Name = "ppm_enabled", Type = 0, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();
@@ -165,6 +169,23 @@ namespace PPTGCS
 		private void ReadoutBtn_Click(object sender, RoutedEventArgs e)
 		{
 			readParams();
+		}
+
+		private void clearBtn_Click(object sender, RoutedEventArgs e)
+		{
+			consoleText.Text = "";
+		}
+
+		private void saveBtn_Click(object sender, RoutedEventArgs e)
+		{
+			string str = consoleText.Text;
+			DirectoryInfo di = new DirectoryInfo("D:\\temp");
+			if (!di.Exists)
+				di.Create();
+			StreamWriter sw = new StreamWriter("D:\\temp\\PPT-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".csv");
+			sw.Write(str);
+			sw.Close();
+			MessageBox.Show("保存成功！");
 		}
 	}
 }

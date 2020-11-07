@@ -3,7 +3,22 @@
 
 u8 _led_state;
 u8 _led_r,_led_g,_led_b;
-
+void ledSetOut(void)
+{
+	if(_led_state)
+	{
+		PAout(6)=1;
+		PAout(7)=1;
+		//PAout(8)=1;
+	}
+	else
+	{
+		PAout(6)=_led_r;
+		PAout(7)=_led_g;
+		//PAout(8)=_led_b;
+	}
+	
+}
 void LEDInit(void)
 {
 	GPIO_InitTypeDef gi;
@@ -23,14 +38,11 @@ void LEDInit(void)
 	_led_r=0;
 	_led_g=1;
 	_led_b=1;
+	
+	ledSetOut();
 }
 
-void ledSetOut(void)
-{
-	PAout(6)=_led_r&_led_state;
-	PAout(7)=_led_g&_led_state;
-	//PAout(8)=_led_b&_led_state;
-}
+
 
 void LEDSet(u8 v)
 {
@@ -75,7 +87,8 @@ void LEDFlash(u8 t)
 
 void LEDSetRGB(u8 r,u8 g,u8 b)
 {
-	_led_r=(!r);
-	_led_g=(!g);
-	_led_b=(!b);
+	_led_r=r;
+	_led_g=g;
+	_led_b=b;
+	ledSetOut();
 }

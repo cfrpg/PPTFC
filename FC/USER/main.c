@@ -38,6 +38,8 @@ int main(void)
 	u8 i,j,k;
 
 	u8 t;
+	
+	u8 ledr=1,ledg=0,ledt=0;
 		
 	delay_init();
 	NVIC_Configuration();
@@ -57,7 +59,8 @@ int main(void)
 	}	
 	MainClockInit();
 	CPGInit();
-	PWMInit(params.pwm_rate);
+	//PWMInit(params.pwm_rate);
+	PWMInit(50);
 	PWMInInit();
 	InitTestPin();
 	delay_ms(50);
@@ -72,20 +75,22 @@ int main(void)
 			tick[2]=0;
 		}				
 		//LED
-		if(tick[0]>=ledInterval)
+		if(tick[0]>ledInterval)
 		{				
 			if(ledFlash)
 			{
-				LEDFlash(ledFlash);
-				LEDSet(0);
+				//LEDFlash(ledFlash);
+				//LEDSet(0);
 			}
 			else
 			{
-				LEDFlip();
+				LEDSetRGB(ledt&1,(ledt>>1)&1,1);
+				ledt++;
+				//LEDFlip();
 			}
 			tick[0]=0;
 		}
-		if(tick[1]>=2000)
+		if(tick[1]>2000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
@@ -95,6 +100,9 @@ int main(void)
 			}			
 			PAout(4)=1;
 			CPGUpdate();
+			for(i=0;i<6;i++)
+				printf("%d,",pwmState[i].value);
+			printf("\r\n");
 			PAout(4)=0;
 		}		
 	}

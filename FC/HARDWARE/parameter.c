@@ -50,6 +50,9 @@ void ParamReset(void)
 	params.ratio=7;
 	params.dead_zone=0.05;
 	params.cpg_am=20;
+	params.yaw_scale=0.8;
+	params.motor_freq_max=50;
+	params.ppm_enabled=0;
 	params.tailFlag=0xFCFC;
 }
 
@@ -69,6 +72,8 @@ u8 ParamSet(u8 id,s32 v)
 	{
 		case 0:
 			params.pwm_rate=v;
+			if(params.pwm_rate>450)
+				params.pwm_rate=450;
 		break;
 		case 1:
 			params.scale_ratio=paramReadFixed(v,4);
@@ -95,6 +100,14 @@ u8 ParamSet(u8 id,s32 v)
 			params.dead_zone=paramReadFixed(v,5);
 		case 9:
 			params.cpg_am=paramReadFixed(v,3);
+		case 10:
+			params.yaw_scale=paramReadFixed(v,5);
+			if(params.yaw_scale>0.95)
+				params.yaw_scale=0.95;
+		case 11:
+			params.motor_freq_max=paramReadFixed(v,3);
+		case 12:
+			params.ppm_enabled=v;
 		break;
 	}
 	return ParamWrite();
@@ -112,5 +125,8 @@ void ParamShow(void)
 	printf("#7:ratio:%f\r\n",params.ratio);
 	printf("#8:dead_zone:%f\r\n",params.dead_zone);
 	printf("#9:cpg_am:%f\r\n",params.cpg_am);
+	printf("#10:yaw_scale:%f\r\n",params.yaw_scale);
+	printf("#11:motor_freq_max:%f\r\n",params.motor_freq_max);
+	printf("#12:ppm_enabled:%d\r\n",params.ppm_enabled);
 	printf("Param end.\r\n");
 }
