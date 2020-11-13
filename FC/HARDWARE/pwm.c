@@ -39,7 +39,7 @@ void PWMInit(u32 freq)
  
 	TIM_Cmd(TIM2, ENABLE);	
 	
-	PWMInInit();
+	//PWMInInit();
 }
 
 void PWMSet(float out[4])

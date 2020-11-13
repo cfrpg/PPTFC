@@ -98,17 +98,21 @@ u8 ParamSet(u8 id,s32 v)
 		break;
 		case 8:
 			params.dead_zone=paramReadFixed(v,5);
+			break;
 		case 9:
 			params.cpg_am=paramReadFixed(v,3);
+			break;
 		case 10:
 			params.yaw_scale=paramReadFixed(v,5);
 			if(params.yaw_scale>0.95)
 				params.yaw_scale=0.95;
+			break;
 		case 11:
 			params.motor_freq_max=paramReadFixed(v,3);
+			break;
 		case 12:
 			params.ppm_enabled=v;
-		break;
+			break;
 	}
 	return ParamWrite();
 }

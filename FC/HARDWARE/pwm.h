@@ -12,7 +12,27 @@ typedef struct
 	u8 flag;
 } TIMCCState;
 
-extern TIMCCState pwmState[6];
+typedef struct
+{
+	u8 currChannel;
+	u8 state;
+	u32 lastVal;
+	u32 currVal;
+	s32 value;
+} PPMState;
+
+typedef struct
+{
+	s32 center;
+	s32 min;
+	s32 max;
+	s32 range;
+	s32 halfRange;
+} PWMParams;
+
+//extern TIMCCState pwmState[6];
+extern s32 pwmValues[8];
+extern PWMParams pwmParams;
 
 void PWMInit(u32 freq);
 void PWMInInit(void);

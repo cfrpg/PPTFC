@@ -85,16 +85,16 @@ void CPGInit(void)
 void CPGUpdate(void)
 {
 	s8 i,j;
-//	
-//	double roll=(pwmState[0].value-1500)/500.0;
-//	double pitch=(pwmState[1].value-1500)/500.0;
-//	double thro=(pwmState[2].value-1000)/1000.0;
-//	double yaw=(pwmState[3].value-1500)/500.0;
 	
-	double roll=0;
-	double pitch=0;
-	double thro=0.7;
-	double yaw=1;
+	double roll=((double)(pwmValues[0]-pwmParams.center))/pwmParams.halfRange;
+	double pitch=((double)(pwmValues[1]-pwmParams.center))/pwmParams.halfRange;
+	double thro=((double)(pwmValues[2]-pwmParams.min))/pwmParams.range;
+	double yaw=((double)(pwmValues[3]-pwmParams.center))/pwmParams.halfRange;
+//	printf("%f,%f,%f,%f\r\n",roll,pitch,thro,yaw);
+//	double roll=0;
+//	double pitch=1.1;
+//	double thro=0.7;
+//	double yaw=0;
 	double splitNormal=0.5*yaw*params.yaw_scale+0.5;
 	cpgThrust[0]=(cpgdt2*cpgF1*thro-(cpgdt2*cpgk1-2*cpgm)*cpgThrust[1]-(cpgm-0.5*cpgdt*cpgc1)*cpgThrust[2])/(cpgm+0.5*cpgc1*cpgdt);
 	cpgfre=params.freq_min+(params.freq_max-params.freq_min)*cpgThrust[0];
@@ -174,8 +174,8 @@ void CPGUpdate(void)
 			cm[i].mcpg[j]=cm[i].mcpg[j-1];
 			cm[i].xcpg[j]=cm[i].xcpg[j-1];
 			
-			if(cm[i].dphase>cpgmaxdphase)
-				cm[i].dphase=cpgmaxdphase;
+//			if(cm[i].dphase>cpgmaxdphase)
+//				cm[i].dphase=cpgmaxdphase;
 			cm[i].phase+=cm[i].dphase;
 		}
 		cpgThrust[j]=cpgThrust[j-1];
