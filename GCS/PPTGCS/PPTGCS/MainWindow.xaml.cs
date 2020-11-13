@@ -48,6 +48,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 10, Name = "yaw_scale", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 11, Name = "motor_freq_max", Type = 3, Value = 0 });
 			parameters.Add(new Parameter() { ID = 12, Name = "ppm_enabled", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 13, Name = "update_rate", Type = 0, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();

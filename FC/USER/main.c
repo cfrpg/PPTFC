@@ -16,6 +16,7 @@ void InitTestPin(void);
 
 u16 tick[4]={0,0,0,0};
 u16 cpucnt;
+u16 mainWorkRate;
 
 u8 state;
 u8 subState;
@@ -63,7 +64,7 @@ int main(void)
 	//PWMInit(params.pwm_rate);
 	PWMInit(50);
 	PWMInInit();
-	InitTestPin();
+	//InitTestPin();
 	delay_ms(50);
 	ledInterval=5000;
 	ledFlash=0;
@@ -72,13 +73,33 @@ int main(void)
 		ledr=0;
 	else
 		ledg=0;
+	mainWorkRate=10000/params.pwm_rate;
+	state=0;
+	PWMLock(1000);
 	while(1)
 	{	
 		//main work
 		//400Hz
-		if(tick[2]>=25)
+		if(tick[2]>=mainWorkRate)
 		{
 			tick[2]=0;
+			if(state)
+			{
+				CPGUpdate();
+				if(pwmValues[4]<1500)
+				{
+					state=0;
+					PWMLock(1000);
+				}
+			}
+			else
+			{
+				if(pwmValues[4]>1500)
+				{
+					CPGInit();
+					state=1;
+				}
+			}
 		}				
 		//LED
 		if(tick[0]>ledInterval)
@@ -96,7 +117,7 @@ int main(void)
 			}
 			tick[0]=0;
 		}
-		if(tick[1]>200)
+		if(tick[1]>5000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
@@ -104,12 +125,12 @@ int main(void)
 				AnalyzePkg();
 				USART_RX_STA=0;
 			}			
-			PAout(4)=1;
-			CPGUpdate();
+//			PAout(4)=1;
+//			CPGUpdate();
 //			for(i=0;i<6;i++)
 //				printf("%d,",pwmValues[i]);
 //			printf("\r\n");
-			PAout(4)=0;
+//			PAout(4)=0;
 		}		
 	}
 }

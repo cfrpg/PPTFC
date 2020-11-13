@@ -27,6 +27,7 @@ typedef struct
 	float yaw_scale;
 	float motor_freq_max;
 	u32 ppm_enabled;
+	u32 update_rate;
 	u16 tailFlag;
 } ParameterSet;
 

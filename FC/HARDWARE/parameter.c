@@ -53,6 +53,7 @@ void ParamReset(void)
 	params.yaw_scale=0.8;
 	params.motor_freq_max=50;
 	params.ppm_enabled=0;
+	params.update_rate=7;
 	params.tailFlag=0xFCFC;
 }
 
@@ -113,6 +114,9 @@ u8 ParamSet(u8 id,s32 v)
 		case 12:
 			params.ppm_enabled=v;
 			break;
+		case 13:
+			params.update_rate=v;
+			break;
 	}
 	return ParamWrite();
 }
@@ -132,5 +136,6 @@ void ParamShow(void)
 	printf("#10:yaw_scale:%f\r\n",params.yaw_scale);
 	printf("#11:motor_freq_max:%f\r\n",params.motor_freq_max);
 	printf("#12:ppm_enabled:%d\r\n",params.ppm_enabled);
+	printf("#13:update_rate:%d\r\n",params.update_rate);
 	printf("Param end.\r\n");
 }

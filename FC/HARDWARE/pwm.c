@@ -44,7 +44,6 @@ void PWMInit(u32 freq)
 
 void PWMSet(float out[4])
 {
-	u8 i;
 	if(out[0]<0)
 		TIM_SetCompare1(TIM2,900);
 	else
@@ -61,4 +60,12 @@ void PWMSet(float out[4])
 		TIM_SetCompare4(TIM2,900);
 	else
 		TIM_SetCompare4(TIM2,(u16)(out[3]*1000+1000));	
+}
+
+void PWMLock(u16 v)
+{
+	TIM_SetCompare1(TIM2,v);
+	TIM_SetCompare2(TIM2,v);
+	TIM_SetCompare3(TIM2,v);
+	TIM_SetCompare4(TIM2,v);
 }

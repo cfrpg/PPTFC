@@ -11,6 +11,10 @@ double cpgdt;
 double cpgpd[3];
 double cpgThrust[3];
 float cpgout[4];
+u32 cpgtimecnt;
+double cpgroll,cpgpitch,cpgyaw;
+double cpgshr;
+double cpgrange;
 
 double cpgm;
 double cpgc;
@@ -63,6 +67,12 @@ void CPGInit(void)
 	cpgc=cpgam;
 	cpgk=cpgam*cpgam/4;
 	cpgF=cpgk;
+	cpgtimecnt=0;
+	
+	cpgroll=0;
+	cpgpitch=0;
+	cpgyaw=0;
+	cpgshr=0;
 	
 	cpgc1=cpgam*params.ratio;
 	cpgk1=cpgc1*cpgc1/4;
@@ -95,20 +105,26 @@ void CPGUpdate(void)
 //	double pitch=1.1;
 //	double thro=0.7;
 //	double yaw=0;
-	double splitNormal=0.5*yaw*params.yaw_scale+0.5;
+	double splitNormal;
 	cpgThrust[0]=(cpgdt2*cpgF1*thro-(cpgdt2*cpgk1-2*cpgm)*cpgThrust[1]-(cpgm-0.5*cpgdt*cpgc1)*cpgThrust[2])/(cpgm+0.5*cpgc1*cpgdt);
 	cpgfre=params.freq_min+(params.freq_max-params.freq_min)*cpgThrust[0];
-		
+	cpgrange=cpgfre/params.pwm_rate*0.5;
 	cpgpd[0]=(cpgdt2F*cpgpdt-cpgdt2k2m*cpgpd[1]-cpgmmdtc*cpgpd[2])/cpgmpcdt;
 	
-	cm[0].am= roll-pitch;
-	cm[1].am=-roll-pitch;
-	cm[2].am=-roll+pitch;
-	cm[3].am= roll+pitch;
-	cm[0].xm=-pitch*cpgmaxbias;
-	cm[1].xm=pitch*cpgmaxbias;
-	cm[2].xm=pitch*cpgmaxbias;
-	cm[3].xm=-pitch*cpgmaxbias;
+	if(cpgtimecnt%params.update_rate==2)
+	{
+		cpgroll=roll;
+		cpgpitch=pitch;
+	}
+	
+	cm[0].am= cpgroll-cpgpitch;
+	cm[1].am=-cpgroll-cpgpitch;
+	cm[2].am=-cpgroll+cpgpitch;
+	cm[3].am= cpgroll+cpgpitch;
+	cm[0].xm=-cpgpitch*cpgmaxbias;
+	cm[1].xm=cpgpitch*cpgmaxbias;
+	cm[2].xm=cpgpitch*cpgmaxbias;
+	cm[3].xm=-cpgpitch*cpgmaxbias;
 	
 	for(i=0;i<4;i++)
 	{
@@ -122,10 +138,16 @@ void CPGUpdate(void)
 	{		
 		double sp;
 		double spp;
+			
 				
 		//M1,M3
 		sp=cm[0].phase/twopi;
 		spp=sp-(s32)sp;
+		if(spp>=-cpgrange&&spp<=cpgrange)
+		{
+			cpgyaw=yaw*params.yaw_scale;
+		}
+		splitNormal=0.5*cpgyaw+0.5;
 		if(spp>=0&&spp<0.25)
 		{
 			cm[0].dphase=cpgdt*(pi*cpgfre/splitNormal);
@@ -187,6 +209,7 @@ void CPGUpdate(void)
 		cpgout[i]=(float)((cm[i].m+1)/2);
 		//cpgout[i]=0.5;
 	}
+	cpgtimecnt++;
 	PWMSet(cpgout);
 	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cm[0].dphase);
 }
