@@ -61,8 +61,8 @@ int main(void)
 	//params.ppm_enabled=1;
 	MainClockInit();
 	CPGInit();
-	//PWMInit(params.pwm_rate);
-	PWMInit(50);
+	PWMInit(params.pwm_rate);
+	//PWMInit(50);
 	PWMInInit();
 	//InitTestPin();
 	delay_ms(50);
@@ -75,7 +75,14 @@ int main(void)
 		ledg=0;
 	mainWorkRate=10000/params.pwm_rate;
 	state=0;
-	PWMLock(1000);
+	PWMLock(1500);
+	
+	if(params.pwm_rate<=100)
+		ledInterval=2500;
+	else if(params.pwm_rate<=250)
+		ledInterval=5000;
+	else
+		ledInterval=10000;
 	while(1)
 	{	
 		//main work
@@ -89,7 +96,7 @@ int main(void)
 				if(pwmValues[4]<1500)
 				{
 					state=0;
-					PWMLock(1000);
+					PWMLock(1500);
 				}
 			}
 			else
