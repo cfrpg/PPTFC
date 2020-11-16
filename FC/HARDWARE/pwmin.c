@@ -7,6 +7,7 @@ PPMState ppmState;
 
 s32 pwmValues[8];
 PWMParams pwmParams;
+u8 pwmin_rev[8];
 
 void pwmInitPwmMode(void);
 void pwmInitPPMMode(void);
@@ -17,9 +18,13 @@ void TIM1IntPPM(void);
 void PWMInInit(void)
 {
 	u8 i;
+	u32 t=params.input_rev;
 	for(i=0;i<8;i++)
 	{
 		pwmValues[i]=0;
+		pwmin_rev[i]=t&1;
+		t>>=1;
+			
 	}
 	if(params.ppm_enabled)
 		pwmInitPPMMode();
@@ -214,7 +219,14 @@ void TIM1IntPWM(void)
 						tmp=0;
 					}
 					pwmState[i].value=(pwmState[i].downv+tmp-pwmState[i].upv);
-					pwmValues[i]=pwmState[i].value;
+					if(pwmin_rev[i])
+					{
+						pwmValues[i]=3000-pwmState[i].value;
+					}
+					else
+					{
+						pwmValues[i]=pwmState[i].value;
+					}
 					pwmState[i].STA=0;
 					setPolarity(i,TIM_ICPolarity_Rising);
 				}
@@ -317,7 +329,14 @@ void TIM3_IRQHandler(void)
 						tmp=0;
 					}
 					pwmState[i].value=(pwmState[i].downv+tmp-pwmState[i].upv);
-					pwmValues[i]=pwmState[i].value;
+					if(pwmin_rev[i])
+					{
+						pwmValues[i]=3000-pwmState[i].value;
+					}
+					else
+					{
+						pwmValues[i]=pwmState[i].value;
+					}
 					pwmState[i].STA=0;
 					setPolarity(i,TIM_ICPolarity_Rising);
 				}

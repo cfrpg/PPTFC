@@ -54,6 +54,7 @@ void ParamReset(void)
 	params.motor_freq_max=50;
 	params.ppm_enabled=0;
 	params.update_rate=7;
+	params.input_rev=0;
 	params.tailFlag=0xFCFC;
 }
 
@@ -66,6 +67,21 @@ float paramReadFixed(s32 v,u8 n)
 	}
 	return res;
 }
+u32 paramReadBinary(s32 v)
+{
+	u32 res=0;
+	u32 mask=1;
+	while(v>0)
+	{
+		if(v%10==1)
+		{
+			res|=mask;
+		}
+		mask<<=1;
+		v/=10;
+	}
+	return res;
+}
 
 u8 ParamSet(u8 id,s32 v)
 {
@@ -75,28 +91,28 @@ u8 ParamSet(u8 id,s32 v)
 			params.pwm_rate=v;
 			if(params.pwm_rate>450)
 				params.pwm_rate=450;
-		break;
+			break;
 		case 1:
 			params.scale_ratio=paramReadFixed(v,4);
-		break;
+			break;
 		case 2:
 			params.man_adv=paramReadFixed(v,5);
-		break;
+			break;
 		case 3:
 			params.freq_min=paramReadFixed(v,4);
-		break;
+			break;
 		case 4:
 			params.freq_max=paramReadFixed(v,4);
-		break;
+			break;
 		case 5:
 			params.am_max=paramReadFixed(v,3);
-		break;
+			break;
 		case 6:
 			params.bias_max=paramReadFixed(v,3);
-		break;
+			break;
 		case 7:
 			params.ratio=paramReadFixed(v,4);
-		break;
+			break;
 		case 8:
 			params.dead_zone=paramReadFixed(v,5);
 			break;
@@ -116,6 +132,9 @@ u8 ParamSet(u8 id,s32 v)
 			break;
 		case 13:
 			params.update_rate=v;
+			break;
+		case 14:
+			params.input_rev=paramReadBinary(v);
 			break;
 	}
 	return ParamWrite();
@@ -137,5 +156,6 @@ void ParamShow(void)
 	printf("#11:motor_freq_max:%f\r\n",params.motor_freq_max);
 	printf("#12:ppm_enabled:%d\r\n",params.ppm_enabled);
 	printf("#13:update_rate:%d\r\n",params.update_rate);
+	printf("#14:input_rev:%d\r\n",params.input_rev);
 	printf("Param end.\r\n");
 }

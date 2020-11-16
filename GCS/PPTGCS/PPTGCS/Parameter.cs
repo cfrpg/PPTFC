@@ -71,7 +71,8 @@ namespace PPTGCS
 			int one = 1, res = 0;
 			while (vi > 0)
 			{
-				res += one;
+				if(vi%2==1)
+					res += one;
 				one *= 10;
 				vi >>= 1;
 			}

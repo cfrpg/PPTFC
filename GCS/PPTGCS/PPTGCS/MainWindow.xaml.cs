@@ -38,8 +38,8 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 0, Name = "pwm_rate", Type = 0, Value = 0 });
 			parameters.Add(new Parameter() { ID = 1, Name = "scale_ratio", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 2, Name = "man_adv", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 3, Name = "freq_min", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 4, Name = "freq_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 3, Name = "freq_min", Type = 4, Value = 0 });
+			parameters.Add(new Parameter() { ID = 4, Name = "freq_max", Type = 4, Value = 0 });
 			parameters.Add(new Parameter() { ID = 5, Name = "am_max", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 6, Name = "bias_max", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
@@ -49,6 +49,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 11, Name = "motor_freq_max", Type = 3, Value = 0 });
 			parameters.Add(new Parameter() { ID = 12, Name = "ppm_enabled", Type = 0, Value = 0 });
 			parameters.Add(new Parameter() { ID = 13, Name = "update_rate", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 14, Name = "input_rev", Type = -1, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();

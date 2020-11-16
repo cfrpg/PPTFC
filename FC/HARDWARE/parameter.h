@@ -28,6 +28,7 @@ typedef struct
 	float motor_freq_max;
 	u32 ppm_enabled;
 	u32 update_rate;
+	u32 input_rev;
 	u16 tailFlag;
 } ParameterSet;
 

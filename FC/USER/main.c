@@ -40,7 +40,7 @@ int main(void)
 
 	u8 t;
 	
-	u8 ledr=1,ledg=1,ledt=0;
+	u8 ledr=1,ledg=1,ledb=1,ledt=0;
 		
 	delay_init();
 	NVIC_Configuration();
@@ -75,7 +75,7 @@ int main(void)
 		ledg=0;
 	mainWorkRate=10000/params.pwm_rate;
 	state=0;
-	PWMLock(1500);
+	PWMLock(900);
 	
 	if(params.pwm_rate<=100)
 		ledInterval=2500;
@@ -96,7 +96,7 @@ int main(void)
 				if(pwmValues[4]<1500)
 				{
 					state=0;
-					PWMLock(1500);
+					PWMLock(900);
 				}
 			}
 			else
@@ -118,7 +118,7 @@ int main(void)
 			}
 			else
 			{
-				LEDSetRGB(ledr,ledg,1);
+				LEDSetRGB(ledr,ledg,ledb);
 				//ledt++;
 				LEDFlip();
 			}

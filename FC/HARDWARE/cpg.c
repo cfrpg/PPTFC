@@ -100,6 +100,7 @@ void CPGUpdate(void)
 	double pitch=((double)(pwmValues[1]-pwmParams.center))/pwmParams.halfRange;
 	double thro=((double)(pwmValues[2]-pwmParams.min))/pwmParams.range;
 	double yaw=((double)(pwmValues[3]-pwmParams.center))/pwmParams.halfRange;
+//	thro=1-thro;
 //	printf("%f,%f,%f,%f\r\n",roll,pitch,thro,yaw);
 //	double roll=0;
 //	double pitch=1.1;
