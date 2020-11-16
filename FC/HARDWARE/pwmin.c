@@ -277,14 +277,18 @@ void TIM1IntPPM(void)
 		}
 		else
 		{
-			if(ppmState.currChannel<8)
-				pwmValues[ppmState.currChannel]=ppmState.value;
-			ppmState.currChannel++;
 			if(ppmState.value>2000)
 			{
 				ppmState.state=1;
 				ppmState.currChannel=0;
 			}
+			else
+			{
+				if(ppmState.currChannel<8)
+					pwmValues[ppmState.currChannel]=ppmState.value;
+				ppmState.currChannel++;
+			}
+			
 		}							
 	}			
 			

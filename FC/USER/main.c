@@ -41,6 +41,8 @@ int main(void)
 	u8 t;
 	
 	u8 ledr=1,ledg=1,ledb=1,ledt=0;
+	
+	u8 key,lastkey;
 		
 	delay_init();
 	NVIC_Configuration();
@@ -67,16 +69,16 @@ int main(void)
 	//InitTestPin();
 	delay_ms(50);
 	ledInterval=5000;
-	ledFlash=0;
+	ledFlash=1;
 	
-	if(params.ppm_enabled)
+	if(params.flight_mode)
 		ledr=0;
 	else
 		ledg=0;
 	mainWorkRate=10000/params.pwm_rate;
 	state=0;
 	PWMLock(900);
-	
+	LEDSet(1);
 	if(params.pwm_rate<=100)
 		ledInterval=2500;
 	else if(params.pwm_rate<=250)
@@ -92,11 +94,16 @@ int main(void)
 			tick[2]=0;
 			if(state)
 			{
-				CPGUpdate();
+				if(params.flight_mode)
+					CPGUpdateFlight();
+				else
+					CPGUpdateHover();
+				
 				if(pwmValues[4]<1500)
 				{
 					state=0;
 					PWMLock(900);
+					ledFlash=0;
 				}
 			}
 			else
@@ -105,8 +112,11 @@ int main(void)
 				{
 					CPGInit();
 					state=1;
+					LEDSet(1);
+					ledFlash=1;
 				}
 			}
+			//printf("%d,%d,%d,%d,%d,%d\r\n",pwmValues[0],pwmValues[1],pwmValues[2],pwmValues[3],pwmValues[4],pwmValues[5]);
 		}				
 		//LED
 		if(tick[0]>ledInterval)
@@ -124,14 +134,36 @@ int main(void)
 			}
 			tick[0]=0;
 		}
-		if(tick[1]>5000)
+		if(tick[1]>2000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
 			{				
 				AnalyzePkg();
 				USART_RX_STA=0;
-			}			
+			}
+			key|=KeyRead();
+			if((key&0x7)==3)
+			{
+				if(!state)
+				{					
+					if(params.flight_mode)
+					{
+						params.flight_mode=0;
+						ledr=1;
+						ledg=0;
+					}
+					else
+					{
+						params.flight_mode=1;
+						ledg=1;
+						ledr=0;
+					}
+					ParamWrite();
+					LEDFlash(3);
+				}
+			}
+			key<<=1;
 //			PAout(4)=1;
 //			CPGUpdate();
 //			for(i=0;i<6;i++)

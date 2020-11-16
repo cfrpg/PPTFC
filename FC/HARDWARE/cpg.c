@@ -92,7 +92,34 @@ void CPGInit(void)
 	cpgmpcdt=cpgm+0.5*cpgdt*cpgc;
 }
 
-void CPGUpdate(void)
+void cpgBackup(void)
+{
+	s8 i,j;
+	for(j=2;j>0;j--)
+	{
+		for(i=0;i<4;i++)
+		{
+			cm[i].mcpg[j]=cm[i].mcpg[j-1];
+			cm[i].xcpg[j]=cm[i].xcpg[j-1];
+			
+//			if(cm[i].dphase>cpgmaxdphase)
+//				cm[i].dphase=cpgmaxdphase;
+			cm[i].phase+=cm[i].dphase;
+		}
+		cpgThrust[j]=cpgThrust[j-1];
+		cpgpd[j]=cpgpd[j-1];
+	}
+	
+	for(i=0;i<4;i++)
+	{
+		cpgout[i]=(float)((cm[i].m+1)/2);
+		//cpgout[i]=0.5;
+	}
+	cpgtimecnt++;
+	PWMSet(cpgout);
+}
+
+void CPGUpdateHover(void)
 {
 	s8 i,j;
 	
@@ -190,27 +217,110 @@ void CPGUpdate(void)
 	cm[2].m=-cm[2].mcpg[0]*sin(cm[2].phase+cpgpd[0])+cm[2].xcpg[0];
 	cm[3].m=cm[3].mcpg[0]*sin(cm[3].phase+cpgpd[0])+cm[3].xcpg[0];
 	
-	for(j=2;j>0;j--)
+	cpgBackup();
+	
+	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cm[0].dphase);
+}
+
+void CPGUpdateFlight(void)
+{
+	s8 i,j;
+	
+	double roll=((double)(pwmValues[0]-pwmParams.center))/pwmParams.halfRange;
+	double pitch=((double)(pwmValues[1]-pwmParams.center))/pwmParams.halfRange;
+	double thro=((double)(pwmValues[2]-pwmParams.min))/pwmParams.range;
+	double yaw=((double)(pwmValues[3]-pwmParams.center))/pwmParams.halfRange;
+	double pdt=((double)(pwmValues[5]-pwmParams.min))/pwmParams.range;
+//	thro=1-thro;
+//	printf("%f,%f,%f,%f\r\n",roll,pitch,thro,yaw);
+//	double roll=0;
+//	double pitch=1.1;
+//	double thro=0.7;
+//	double yaw=0;
+	double splitNormal;
+	
+	cpgThrust[0]=(cpgdt2*cpgF1*thro-(cpgdt2*cpgk1-2*cpgm)*cpgThrust[1]-(cpgm-0.5*cpgdt*cpgc1)*cpgThrust[2])/(cpgm+0.5*cpgc1*cpgdt);
+	cpgfre=params.freq_min+(params.freq_max-params.freq_min)*cpgThrust[0];
+	cpgrange=cpgfre/params.pwm_rate*0.5;
+	cpgpd[0]=(cpgdt2F*pdt*pi-cpgdt2k2m*cpgpd[1]-cpgmmdtc*cpgpd[2])/cpgmpcdt;
+	
+	if(cpgtimecnt%params.update_rate==2)
 	{
-		for(i=0;i<4;i++)
-		{
-			cm[i].mcpg[j]=cm[i].mcpg[j-1];
-			cm[i].xcpg[j]=cm[i].xcpg[j-1];
-			
-//			if(cm[i].dphase>cpgmaxdphase)
-//				cm[i].dphase=cpgmaxdphase;
-			cm[i].phase+=cm[i].dphase;
-		}
-		cpgThrust[j]=cpgThrust[j-1];
-		cpgpd[j]=cpgpd[j-1];
+		cpgyaw=yaw;
+		cpgpitch=pitch;
 	}
+	
+	cm[0].am= (cpgyaw*params.man_adv+cpgThrustT);
+	cm[1].am=-(-cpgyaw*params.man_adv+cpgThrustT);
+	cm[2].am=-(-cpgyaw*params.man_adv+cpgThrustT);
+	cm[3].am= (cpgyaw*params.man_adv+cpgThrustT);
+	cm[0].xm=cpgpitch*cpgmaxbias;
+	cm[1].xm=-cpgpitch*cpgmaxbias;
+	cm[2].xm=-cpgpitch*cpgmaxbias;
+	cm[3].xm=cpgpitch*cpgmaxbias;
 	
 	for(i=0;i<4;i++)
 	{
-		cpgout[i]=(float)((cm[i].m+1)/2);
-		//cpgout[i]=0.5;
+		cm[i].dphase=cpgdt*twopi*cpgfre;
+		cm[i].am=cm[i].am*cpgmaxam;
+		cm[i].mcpg[0]=(cpgdt2F*cm[i].am-cpgdt2k2m*cm[i].mcpg[1]-cpgmmdtc*cm[i].mcpg[2])/cpgmpcdt;
+		cm[i].xcpg[0]=(cpgdt2F*cm[i].xm-cpgdt2k2m*cm[i].xcpg[1]-cpgmmdtc*cm[i].xcpg[2])/cpgmpcdt;
 	}
-	cpgtimecnt++;
-	PWMSet(cpgout);
-	//printf("%f,%f,%f,%f,%f\r\n",cpgout[0],cpgout[1],cpgout[2],cpgout[3],cm[0].dphase);
+	
+	if(fabs(roll)>params.dead_zone)
+	{		
+		double sp;
+		double spp;
+			
+				
+		//M1,M4
+		sp=cm[0].phase/twopi;
+		spp=sp-(s32)sp;
+		if(spp>=-cpgrange&&spp<=cpgrange)
+		{
+			cpgroll=roll*params.yaw_scale;
+		}
+		splitNormal=0.5*cpgroll+0.5;
+		if(spp>=0&&spp<0.25)
+		{
+			cm[0].dphase=cpgdt*(pi*cpgfre/splitNormal);
+			cm[3].dphase=cm[0].dphase;			
+		}
+		if(spp>=0.25&&spp<=0.75)
+		{
+			cm[0].dphase=cpgdt*(pi*cpgfre/(1-splitNormal));
+			cm[3].dphase=cm[0].dphase;
+		}
+		if(spp>0.75&&spp<=1)
+		{
+			cm[0].dphase=cpgdt*(pi*cpgfre/splitNormal);
+			cm[3].dphase=cm[0].dphase;			
+		}
+		
+		//M2,M3
+		sp=cm[1].phase/twopi;
+		spp=sp-(s32)sp;
+		if(spp>=0&&spp<0.25)
+		{			
+			cm[1].dphase=cpgdt*(pi*cpgfre/(1-splitNormal));
+			cm[2].dphase=cm[1].dphase;			
+		}
+		if(spp>=0.25&&spp<=0.75)
+		{
+			cm[1].dphase=cpgdt*(pi*cpgfre/splitNormal);
+			cm[2].dphase=cm[1].dphase;	
+		}
+		if(spp>0.75&&spp<=1)
+		{
+			cm[1].dphase=cpgdt*(pi*cpgfre/(1-splitNormal));
+			cm[2].dphase=cm[1].dphase;			
+		}
+	}
+	
+	cm[0].m=cm[0].mcpg[0]*sin(cm[0].phase)+cm[0].xcpg[0];
+	cm[1].m=cm[1].mcpg[0]*sin(cm[1].phase)+cm[1].xcpg[0];
+	cm[2].m=cm[2].mcpg[0]*sin(cm[2].phase+cpgpd[0])+cm[2].xcpg[0];
+	cm[3].m=cm[3].mcpg[0]*sin(cm[3].phase+cpgpd[0])+cm[3].xcpg[0];
+	
+	cpgBackup();
 }

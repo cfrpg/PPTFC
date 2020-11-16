@@ -16,6 +16,7 @@ typedef struct
 } CPGMotor;
 
 void CPGInit(void);
-void CPGUpdate(void);
+void CPGUpdateHover(void);
+void CPGUpdateFlight(void);
 
 #endif

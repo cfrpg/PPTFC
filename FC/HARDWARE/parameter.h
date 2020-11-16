@@ -29,6 +29,7 @@ typedef struct
 	u32 ppm_enabled;
 	u32 update_rate;
 	u32 input_rev;
+	u32 flight_mode;
 	u16 tailFlag;
 } ParameterSet;
 

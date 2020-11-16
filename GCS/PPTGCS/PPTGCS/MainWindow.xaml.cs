@@ -50,6 +50,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 12, Name = "ppm_enabled", Type = 0, Value = 0 });
 			parameters.Add(new Parameter() { ID = 13, Name = "update_rate", Type = 0, Value = 0 });
 			parameters.Add(new Parameter() { ID = 14, Name = "input_rev", Type = -1, Value = 0 });
+			parameters.Add(new Parameter() { ID = 15, Name = "flight_mode", Type = 0, Value = 0 });
 			paramListView.DataContext = parameters;
 			getPorts();
 			port = new SerialPort();

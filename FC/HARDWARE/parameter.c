@@ -55,6 +55,7 @@ void ParamReset(void)
 	params.ppm_enabled=0;
 	params.update_rate=7;
 	params.input_rev=0;
+	params.flight_mode=1;
 	params.tailFlag=0xFCFC;
 }
 
@@ -136,6 +137,9 @@ u8 ParamSet(u8 id,s32 v)
 		case 14:
 			params.input_rev=paramReadBinary(v);
 			break;
+		case 15:
+			params.flight_mode=v;
+			break;
 	}
 	return ParamWrite();
 }
@@ -157,5 +161,6 @@ void ParamShow(void)
 	printf("#12:ppm_enabled:%d\r\n",params.ppm_enabled);
 	printf("#13:update_rate:%d\r\n",params.update_rate);
 	printf("#14:input_rev:%d\r\n",params.input_rev);
+	printf("#15:flight_mode:%d\r\n",params.flight_mode);
 	printf("Param end.\r\n");
 }
