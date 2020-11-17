@@ -37,7 +37,7 @@ void LEDInit(void)
 	_led_state=0;
 	_led_r=1;
 	_led_g=1;
-	_led_b=0;
+	_led_b=1;
 	
 	ledSetOut();
 }

@@ -69,7 +69,7 @@ int main(void)
 	//InitTestPin();
 	delay_ms(50);
 	ledInterval=5000;
-	ledFlash=1;
+	//ledFlash=1;
 	
 	if(params.flight_mode)
 		ledr=0;
@@ -85,6 +85,7 @@ int main(void)
 		ledInterval=5000;
 	else
 		ledInterval=10000;
+	LEDSetRGB(ledr,ledg,ledb);
 	while(1)
 	{	
 		//main work
@@ -103,7 +104,7 @@ int main(void)
 				{
 					state=0;
 					PWMLock(900);
-					ledFlash=0;
+					//ledFlash=0;
 				}
 			}
 			else
@@ -112,8 +113,8 @@ int main(void)
 				{
 					CPGInit();
 					state=1;
-					LEDSet(1);
-					ledFlash=1;
+					//LEDSet(1);
+					//ledFlash=1;
 				}
 			}
 			//printf("%d,%d,%d,%d,%d,%d\r\n",pwmValues[0],pwmValues[1],pwmValues[2],pwmValues[3],pwmValues[4],pwmValues[5]);
@@ -121,10 +122,10 @@ int main(void)
 		//LED
 		if(tick[0]>ledInterval)
 		{				
-			if(ledFlash)
+			if(state)
 			{
 				//LEDFlash(ledFlash);
-				//LEDSet(0);
+				LEDSet(1);
 			}
 			else
 			{
