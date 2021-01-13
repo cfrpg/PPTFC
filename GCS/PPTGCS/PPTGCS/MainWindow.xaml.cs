@@ -36,12 +36,12 @@ namespace PPTGCS
 			InitializeComponent();
 			parameters = new ObservableCollection<Parameter>();
 			parameters.Add(new Parameter() { ID = 0, Name = "pwm_rate", Type = 0, Value = 0 });
-			parameters.Add(new Parameter() { ID = 1, Name = "scale_ratio", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 2, Name = "man_adv", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 3, Name = "freq_min", Type = 4, Value = 0 });
-			parameters.Add(new Parameter() { ID = 4, Name = "freq_max", Type = 4, Value = 0 });
-			parameters.Add(new Parameter() { ID = 5, Name = "am_max", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 6, Name = "bias_max", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 1, Name = "thro_min", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 2, Name = "thro_homing", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 3, Name = "dead_zone", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 4, Name = "roll_delay", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 5, Name = "roll_step_val", Type = 0, Value = 0 });
+			parameters.Add(new Parameter() { ID = 6, Name = "roll_span", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 8, Name = "dead_zone", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 9, Name = "cpg_am", Type = 3, Value = 0 });

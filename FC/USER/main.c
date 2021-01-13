@@ -8,7 +8,7 @@
 #include "led.h"
 #include "pwm.h"
 #include "key.h"
-#include "cpg.h"
+#include "glideLock.h"
 
 void AnalyzePkg(void);
 void MainWork(void);
@@ -62,7 +62,7 @@ int main(void)
 	}	
 	//params.ppm_enabled=1;
 	MainClockInit();
-	CPGInit();
+
 	PWMInit(params.pwm_rate);
 	//PWMInit(50);
 	PWMInInit();
@@ -70,6 +70,8 @@ int main(void)
 	delay_ms(50);
 	ledInterval=5000;
 	//ledFlash=1;
+	
+	GLInit();
 	
 	if(params.flight_mode)
 		ledr=0;
@@ -95,10 +97,6 @@ int main(void)
 			tick[2]=0;
 			if(state)
 			{
-				if(params.flight_mode)
-					CPGUpdateFlight();
-				else
-					CPGUpdateHover();
 				
 				if(pwmValues[4]<1500)
 				{
@@ -111,7 +109,7 @@ int main(void)
 			{
 				if(pwmValues[4]>1500)
 				{
-					CPGInit();
+					
 					state=1;
 					//LEDSet(1);
 					//ledFlash=1;

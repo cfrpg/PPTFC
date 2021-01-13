@@ -15,14 +15,14 @@ typedef struct
 {
 	u16 headFlag;
 	u32 pwm_rate;
-	float scale_ratio;
-	float man_adv;
-	float freq_min;
-	float freq_max;
-	float am_max;
-	float bias_max;
+	s32 thro_min;
+	s32 thro_homing;
+	s32 dead_zone;
+	float roll_delay;
+	s32 roll_step_val;
+	float roll_span;
 	float ratio;
-	float dead_zone;
+	float rev;
 	float cpg_am;
 	float yaw_scale;
 	float motor_freq_max;

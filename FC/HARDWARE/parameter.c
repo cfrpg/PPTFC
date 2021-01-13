@@ -41,14 +41,14 @@ void ParamReset(void)
 {	
 	params.headFlag=0xCFCF;
 	params.pwm_rate=400;
-	params.scale_ratio=5;
-	params.man_adv=0.35;
-	params.freq_min=5;
-	params.freq_max=23;
-	params.am_max=150;
-	params.bias_max=10;
+	params.thro_min=1200;
+	params.thro_homing=1190;
+	params.dead_zone=20;
+	params.roll_delay=0.5;
+	params.roll_step_val=100;
+	params.roll_span=0.5;
 	params.ratio=7;
-	params.dead_zone=0.05;
+	//params.dead_zone=0.05;
 	params.cpg_am=20;
 	params.yaw_scale=0.8;
 	params.motor_freq_max=50;
@@ -94,22 +94,22 @@ u8 ParamSet(u8 id,s32 v)
 				params.pwm_rate=450;
 			break;
 		case 1:
-			params.scale_ratio=paramReadFixed(v,4);
+			params.thro_min=v;
 			break;
 		case 2:
-			params.man_adv=paramReadFixed(v,5);
+			params.thro_homing=v;
 			break;
 		case 3:
-			params.freq_min=paramReadFixed(v,4);
+			params.dead_zone=v;
 			break;
 		case 4:
-			params.freq_max=paramReadFixed(v,4);
+			params.roll_delay=paramReadFixed(v,5);
 			break;
 		case 5:
-			params.am_max=paramReadFixed(v,3);
+			params.roll_step_val=v;
 			break;
 		case 6:
-			params.bias_max=paramReadFixed(v,3);
+			params.roll_span=paramReadFixed(v,5);
 			break;
 		case 7:
 			params.ratio=paramReadFixed(v,4);
@@ -147,14 +147,14 @@ u8 ParamSet(u8 id,s32 v)
 void ParamShow(void)
 {
 	printf("#0:pwm_rate:%d\r\n",params.pwm_rate);
-	printf("#1:scale_ratio:%f\r\n",params.scale_ratio);
-	printf("#2:man_adv:%f\r\n",params.man_adv);
-	printf("#3:freq_min:%f\r\n",params.freq_min);
-	printf("#4:freq_max:%f\r\n",params.freq_max);
-	printf("#5:am_max:%f\r\n",params.am_max);
-	printf("#6:bias_max:%f\r\n",params.bias_max);
+	printf("#1:thro_min:%d\r\n",params.thro_min);
+	printf("#2:thro_homing:%d\r\n",params.thro_homing);
+	printf("#3:dead_zone:%d\r\n",params.dead_zone);
+	printf("#4:roll_delay:%f\r\n",params.roll_delay);
+	printf("#5:roll_step_val:%d\r\n",params.roll_step_val);
+	printf("#6:roll_span:%f\r\n",params.roll_span);
 	printf("#7:ratio:%f\r\n",params.ratio);
-	printf("#8:dead_zone:%f\r\n",params.dead_zone);
+	printf("#8:rev:%f\r\n",params.rev);
 	printf("#9:cpg_am:%f\r\n",params.cpg_am);
 	printf("#10:yaw_scale:%f\r\n",params.yaw_scale);
 	printf("#11:motor_freq_max:%f\r\n",params.motor_freq_max);
