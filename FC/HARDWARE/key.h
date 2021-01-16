@@ -2,7 +2,7 @@
 #define __KEY_H
 #include "sys.h"
 
-#define KEY PBin(1)
+#define KEY PAin(7)
 
 void KeyInit(void);
 u8 KeyRead(void);	

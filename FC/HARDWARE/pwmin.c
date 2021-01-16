@@ -40,8 +40,8 @@ u16 getCap(u8 i)
 		case 1:return TIM_GetCapture2(TIM1);
 		case 2:return TIM_GetCapture3(TIM1);
 		case 3:return TIM_GetCapture4(TIM1);
-		case 4:return TIM_GetCapture1(TIM3);
-		case 5:return TIM_GetCapture2(TIM3);
+		case 4:return TIM_GetCapture1(TIM4);
+		case 5:return TIM_GetCapture2(TIM4);
 	}
 }
 
@@ -53,8 +53,8 @@ void setPolarity(u8 i,u16 p)
 		case 1:TIM_OC2PolarityConfig(TIM1,p);return;
 		case 2:TIM_OC3PolarityConfig(TIM1,p);return;
 		case 3:TIM_OC4PolarityConfig(TIM1,p);return;
-		case 4:TIM_OC1PolarityConfig(TIM3,p);return;
-		case 5:TIM_OC2PolarityConfig(TIM3,p);return;
+		case 4:TIM_OC1PolarityConfig(TIM4,p);return;
+		case 5:TIM_OC2PolarityConfig(TIM4,p);return;
 	}
 }
 
@@ -74,7 +74,7 @@ void pwmInitPwmMode(void)
 	pwmParams.halfRange=500;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
@@ -89,9 +89,8 @@ void pwmInitPwmMode(void)
 	ti.TIM_CounterMode=TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM1,&ti);
 	
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3,ENABLE);
-	gi.GPIO_Pin=GPIO_Pin_4|GPIO_Pin_5;	
+	
+	gi.GPIO_Pin=GPIO_Pin_6|GPIO_Pin_7;	
 	gi.GPIO_Mode=GPIO_Mode_IPD;
 	gi.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB,&gi);	
@@ -100,7 +99,7 @@ void pwmInitPwmMode(void)
 	ti.TIM_Prescaler=71;
 	ti.TIM_ClockDivision=TIM_CKD_DIV1;
 	ti.TIM_CounterMode=TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3,&ti);
+	TIM_TimeBaseInit(TIM4,&ti);
 	for(i=0;i<4;i++)
 	{
 		tc.TIM_ICPolarity=TIM_ICPolarity_Rising;
@@ -110,7 +109,7 @@ void pwmInitPwmMode(void)
 		tc.TIM_Channel=i<<2;
 		TIM_ICInit(TIM1,&tc);
 		if(i<2)
-			TIM_ICInit(TIM3,&tc);
+			TIM_ICInit(TIM4,&tc);
 	}	
 
 	ni.NVIC_IRQChannel=TIM1_CC_IRQn;
@@ -119,15 +118,15 @@ void pwmInitPwmMode(void)
 	ni.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&ni);
 	
-	ni.NVIC_IRQChannel=TIM3_IRQn;
+	ni.NVIC_IRQChannel=TIM4_IRQn;
 	ni.NVIC_IRQChannelPreemptionPriority=2;
 	ni.NVIC_IRQChannelSubPriority=1;
 	ni.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&ni);
-	TIM_ITConfig(TIM3,TIM_IT_CC1|TIM_IT_CC2,ENABLE);
+	TIM_ITConfig(TIM4,TIM_IT_CC1|TIM_IT_CC2,ENABLE);
 	TIM_ITConfig(TIM1,TIM_IT_CC1|TIM_IT_CC2|TIM_IT_CC3|TIM_IT_CC4,ENABLE);
 	TIM_Cmd(TIM1,ENABLE);
-	TIM_Cmd(TIM3,ENABLE);
+	TIM_Cmd(TIM4,ENABLE);
 	
 	for(i=0;i<6;i++)
 	{
@@ -304,7 +303,7 @@ void TIM1_CC_IRQHandler(void)
 		TIM1IntPWM();
 }
 
-void TIM3_IRQHandler(void)
+void TIM4_IRQHandler(void)
 {
 	u8 i;
 	u16 it;
@@ -317,9 +316,9 @@ void TIM3_IRQHandler(void)
 		it=2<<(i-4);
 		if((pwmState[i].STA & 0x80)==0)
 		{			
-			if(TIM_GetITStatus(TIM3,it)!=RESET)
+			if(TIM_GetITStatus(TIM4,it)!=RESET)
 			{						
-				TIM_ClearITPendingBit(TIM3,it);				
+				TIM_ClearITPendingBit(TIM4,it);				
 				if(pwmState[i].STA&0x40)
 				{
 					

@@ -7,33 +7,28 @@ void ledSetOut(void)
 {
 	if(_led_state)
 	{
+		PAout(4)=1;
+		PAout(5)=1;
 		PAout(6)=1;
-		PAout(7)=1;
-		PBout(0)=1;
 	}
 	else
 	{
-		PAout(6)=_led_r;
-		PAout(7)=_led_g;
-		PBout(0)=_led_b;
+		PAout(4)=_led_r;
+		PAout(5)=_led_g;
+		PAout(6)=_led_b;
 	}
 	
 }
 void LEDInit(void)
 {
 	GPIO_InitTypeDef gi;
-	//R&G
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
-	gi.GPIO_Pin=GPIO_Pin_6|GPIO_Pin_7;
+	gi.GPIO_Pin=GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6;
 	gi.GPIO_Mode=GPIO_Mode_Out_PP;
 	gi.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&gi);
-	//B
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
-	gi.GPIO_Pin=GPIO_Pin_0;
-	gi.GPIO_Mode=GPIO_Mode_Out_PP;
-	gi.GPIO_Speed=GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB,&gi);
+
 	_led_state=0;
 	_led_r=1;
 	_led_g=1;

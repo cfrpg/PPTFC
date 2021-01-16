@@ -49,6 +49,7 @@ void ParamReset(void)
 	params.roll_span=0.5;
 	params.ratio=7;
 	//params.dead_zone=0.05;
+	params.rev=0;
 	params.cpg_am=20;
 	params.yaw_scale=0.8;
 	params.motor_freq_max=50;

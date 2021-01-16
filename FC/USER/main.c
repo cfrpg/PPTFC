@@ -49,7 +49,7 @@ int main(void)
 	uart_init(115200);	
 	LEDInit();	
 	KeyInit();
-	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+	USART_ClearITPendingBit(USART3, USART_IT_RXNE);
 	printf("PPT FC\r\n");
 	printf("cfrpg\r\n");
 	printf("Read parameters.\r\n");	
@@ -73,10 +73,7 @@ int main(void)
 	
 	GLInit();
 	
-	if(params.flight_mode)
-		ledr=0;
-	else
-		ledg=0;
+	ledg=0;
 	mainWorkRate=10000/params.pwm_rate;
 	state=0;
 	PWMLock(900);
@@ -120,20 +117,10 @@ int main(void)
 		//LED
 		if(tick[0]>ledInterval)
 		{				
-			if(state)
-			{
-				//LEDFlash(ledFlash);
-				LEDSet(1);
-			}
-			else
-			{
-				LEDSetRGB(ledr,ledg,ledb);
-				//ledt++;
-				LEDFlip();
-			}
+			LEDFlip();
 			tick[0]=0;
 		}
-		if(tick[1]>2000)
+		if(tick[1]>1000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
@@ -144,31 +131,16 @@ int main(void)
 			key|=KeyRead();
 			if((key&0x7)==3)
 			{
-				if(!state)
-				{					
-					if(params.flight_mode)
-					{
-						params.flight_mode=0;
-						ledr=1;
-						ledg=0;
-					}
-					else
-					{
-						params.flight_mode=1;
-						ledg=1;
-						ledr=0;
-					}
-					ParamWrite();
-					LEDFlash(3);
-				}
+				
+				LEDFlash(3);
+				
 			}
 			key<<=1;
-//			PAout(4)=1;
-//			CPGUpdate();
+
 //			for(i=0;i<6;i++)
 //				printf("%d,",pwmValues[i]);
 //			printf("\r\n");
-//			PAout(4)=0;
+
 		}		
 	}
 }
@@ -227,11 +199,11 @@ void AnalyzePkg(void)
 	}
 }
 
-void TIM4_IRQHandler(void)
+void TIM3_IRQHandler(void)
 {
-	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
+	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
 	{
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 		u8 n=4;
 		while(n--)
 		{
