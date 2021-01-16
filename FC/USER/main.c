@@ -13,6 +13,7 @@
 void AnalyzePkg(void);
 void MainWork(void);
 void InitTestPin(void);
+void printLogo(void);
 
 u16 tick[4]={0,0,0,0};
 u16 cpucnt;
@@ -50,9 +51,10 @@ int main(void)
 	LEDInit();	
 	KeyInit();
 	USART_ClearITPendingBit(USART3, USART_IT_RXNE);
-	printf("PPT FC\r\n");
-	printf("cfrpg\r\n");
-	printf("Read parameters.\r\n");	
+	//printf("PPT FC\r\n");
+	printLogo();
+	//printf("cfrpg\r\n");
+	printf("Loading parameters...\r\n");	
 	ParamRead();
 	if(params.headFlag!=0xCFCF||params.tailFlag!=0xFCFC)
 	{
@@ -62,7 +64,7 @@ int main(void)
 	}	
 	//params.ppm_enabled=1;
 	MainClockInit();
-
+	
 	PWMInit(params.pwm_rate);
 	//PWMInit(50);
 	PWMInInit();
@@ -220,4 +222,31 @@ void InitTestPin(void)
 	gi.GPIO_Mode=GPIO_Mode_Out_PP;
 	gi.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&gi);
+}
+
+void printLogo(void)
+{
+//printf(" _____  _____ _______ ______ _____ \r\n");
+//printf("|  __ \\|  __ \\__   __|  ____/ ____|\r\n");
+//printf("| |__) | |__) | | |  | |__ | |     \r\n");
+//printf("|  ___/|  ___/  | |  |  __|| |     \r\n");
+//printf("| |    | |      | |  | |   | |____ \r\n");
+//printf("|_|    |_|      |_|  |_|    \\_____|\r\n");
+	
+printf("         _          _        _            _           _      \r\n");
+printf("        /\\ \\       /\\ \\     /\\ \\         /\\ \\       /\\ \\     \r\n");
+printf("       /  \\ \\     /  \\ \\    \\_\\ \\       /  \\ \\     /  \\ \\    \r\n");
+printf("      / /\\ \\ \\   / /\\ \\ \\   /\\__ \\     / /\\ \\ \\   / /\\ \\ \\   \r\n");
+printf("     / / /\\ \\_\\ / / /\\ \\_\\ / /_ \\ \\   / / /\\ \\_\\ / / /\\ \\ \\  \r\n");
+printf("    / / /_/ / // / /_/ / // / /\\ \\ \\ / /_/_ \\/_// / /  \\ \\_\\ \r\n");
+printf("   / / /__\\/ // / /__\\/ // / /  \\/_// /____/\\  / / /    \\/_/ \r\n");
+printf("  / / /_____// / /_____// / /      / /\\____\\/ / / /          \r\n");
+printf(" / / /      / / /      / / /      / / /      / / /________   \r\n");
+printf("/ / /      / / /      /_/ /      / / /      / / /_________\\  \r\n");
+printf("\\/_/       \\/_/       \\_\\/       \\/_/       \\/____________/ \r\n");
+printf("                           by\r\n");
+printf("               _____ ____ ___   ___   _____\r\n");
+printf("              / ___// __// _ \\ / _ \\ / ___/\r\n");
+printf("             / /__ / _/ / , _// ___// (_ / \r\n");
+printf("             \\___//_/  /_/|_|/_/    \\___/ \r\n");
 }
