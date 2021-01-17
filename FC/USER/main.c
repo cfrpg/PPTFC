@@ -39,9 +39,9 @@ int main(void)
 {	
 	u8 i,j,k;
 
-	u8 t;
+	u8 t,t1;
 	
-	u8 ledr=1,ledg=1,ledb=1,ledt=0;
+	u8 ledr=1,ledg=1,ledb=0,ledt=0;
 	
 	u8 key,lastkey;
 		
@@ -49,6 +49,8 @@ int main(void)
 	NVIC_Configuration();
 	uart_init(115200);	
 	LEDInit();	
+	LEDSetRGB(ledr,ledg,ledb);
+	LEDSet(1);
 	KeyInit();
 	USART_ClearITPendingBit(USART3, USART_IT_RXNE);
 	//printf("PPT FC\r\n");
@@ -75,54 +77,87 @@ int main(void)
 	
 	GLInit();
 	
-	ledg=0;
-	mainWorkRate=10000/params.pwm_rate;
+	
+//	mainWorkRate=10000/params.pwm_rate;
+	mainWorkRate=10000/200;
 	state=0;
 	PWMLock(900);
 	LEDSet(1);
-	if(params.pwm_rate<=100)
-		ledInterval=2500;
-	else if(params.pwm_rate<=250)
-		ledInterval=5000;
-	else
-		ledInterval=10000;
+
+//	if(params.pwm_rate<=100)
+//		ledInterval=2500;
+//	else if(params.pwm_rate<=250)
+//		ledInterval=5000;
+//	else
+//		ledInterval=10000;
+	ledr=1;
+	ledg=0;
+	ledb=1;	
 	LEDSetRGB(ledr,ledg,ledb);
 	while(1)
 	{	
 		//main work
-		//400Hz
+		//200Hz
 		if(tick[2]>=mainWorkRate)
 		{
 			tick[2]=0;
-			if(state)
+			//Select roll strength
+			if(pwmValues[5]<1300)
 			{
-				
-				if(pwmValues[4]<1500)
+				GLState.rollValue=params.roll_step_val;
+			}
+			else if(pwmValues[5]<1600)
+			{
+				GLState.rollValue=params.roll_step_val<<1;
+			}
+			else
+			{
+				GLState.rollValue=params.roll_step_val*3;
+			}
+			if(state)
+			{				
+				if(pwmValues[0]<=950)
 				{
 					state=0;
-					PWMLock(900);
+					PWMSetVal(0,900);
 					//ledFlash=0;
+				}
+				else
+				{
+					t=0;
+					t1=0;
+					if(pwmValues[3]>1500)
+						t=1;
+					if(pwmValues[4]>1500)
+						t1=1;
+					GLUpdate(t,t1);
+					PWMSetVal(0,GLState.pwmBackup[0]);
+					PWMSetVal(1,GLState.pwmBackup[1]);
+					PWMSetVal(2,GLState.pwmBackup[2]);
 				}
 			}
 			else
 			{
-				if(pwmValues[4]>1500)
+				if(pwmValues[0]>950)
 				{
 					
 					state=1;
 					//LEDSet(1);
 					//ledFlash=1;
 				}
+				PWMSetVal(0,900);
+				PWMSetVal(1,(u16)pwmValues[1]);
+				PWMSetVal(2,(u16)pwmValues[2]);
 			}
 			//printf("%d,%d,%d,%d,%d,%d\r\n",pwmValues[0],pwmValues[1],pwmValues[2],pwmValues[3],pwmValues[4],pwmValues[5]);
 		}				
 		//LED
 		if(tick[0]>ledInterval)
-		{				
+		{			
 			LEDFlip();
 			tick[0]=0;
 		}
-		if(tick[1]>1000)
+		if(tick[1]>2000)
 		{						
 			tick[1]=0;	
 			if(USART_RX_STA&0x8000)
@@ -133,9 +168,21 @@ int main(void)
 			key|=KeyRead();
 			if((key&0x7)==3)
 			{
-				
-				LEDFlash(3);
-				
+				GLState.mode^=1;
+				if(GLState.mode)
+				{
+					ledr=0;
+					ledg=1;
+					ledb=1;					
+				}
+				else
+				{
+					ledr=1;
+					ledg=0;
+					ledb=1;		
+				}
+				LEDSetRGB(ledr,ledg,ledb);
+				LEDFlash(3);				
 			}
 			key<<=1;
 
@@ -211,6 +258,8 @@ void TIM3_IRQHandler(void)
 		{
 			tick[n]++;
 		}
+		GLState.counter++;
+		GLState.freqCounter++;
 	}
 }
 

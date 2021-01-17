@@ -62,10 +62,29 @@ void PWMSet(float out[4])
 		TIM_SetCompare4(TIM2,(u16)(out[3]*1000+1000));	
 }
 
+void PWMSetVal(u8 ch,u16 val)
+{
+	switch(ch)
+	{
+		case 0:
+			TIM_SetCompare1(TIM2,val);
+		break;
+		case 1:
+			TIM_SetCompare2(TIM2,val);
+		break;
+		case 2:
+			TIM_SetCompare3(TIM2,val);
+		break;
+		case 3:
+			TIM_SetCompare4(TIM2,val);
+		break;
+	}
+}
+
 void PWMLock(u16 v)
 {
-	TIM_SetCompare1(TIM2,v);
-	TIM_SetCompare2(TIM2,v);
-	TIM_SetCompare3(TIM2,v);
+	TIM_SetCompare1(TIM2,900);
+	TIM_SetCompare2(TIM2,1500);
+	TIM_SetCompare3(TIM2,1500);
 	TIM_SetCompare4(TIM2,v);
 }

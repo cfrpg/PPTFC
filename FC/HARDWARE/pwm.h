@@ -38,6 +38,6 @@ void PWMInit(u32 freq);
 void PWMInInit(void);
 void PWMSet(float out[4]);
 void PWMLock(u16 v);
-
+void PWMSetVal(u8 ch,u16 val);
 
 #endif

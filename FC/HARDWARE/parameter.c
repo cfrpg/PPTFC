@@ -40,7 +40,7 @@ u8 ParamWrite(void)
 void ParamReset(void)
 {	
 	params.headFlag=0xCFCF;
-	params.pwm_rate=400;
+	params.pwm_rate=50;
 	params.thro_min=1200;
 	params.thro_homing=1190;
 	params.dead_zone=20;

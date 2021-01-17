@@ -1,6 +1,12 @@
 #include "glideLock.h"
 #include "stdio.h"
 #include "pwm.h"
+#include "parameter.h"
+
+u8 glstate;
+u8 rollstate;
+GlideLockState GLState;
+s32 rollpos1,rollpos2;
 
 void GLInit(void)
 {
@@ -34,11 +40,160 @@ void GLInit(void)
 	ni.NVIC_IRQChannelSubPriority=2;
 	ni.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&ni);
+	
+	glstate=2;
+	
+	GLState.pwmBackup[0]=0;
+	GLState.pwmBackup[1]=0;
+	GLState.pwmBackup[2]=0;
+	GLState.pwmBackup[3]=0;
+	
+	GLState.hallState[0]=0;
+	GLState.hallState[1]=0;
+	
+	GLState.GLEnabled=0;
+	GLState.rollEnabled=0;
+	
+	GLState.counter=0;
+	GLState.freqCounter=0;
+	
+	rollstate=0;
 }
 
-void GLUpdate(void)
+void updateGlideLock(void)
 {
+	if(glstate==0)
+	{
+		if(pwmValues[0]<params.thro_min)
+		{
+			glstate=1;
+		}
+		else
+		{
+			GLState.pwmBackup[0]=(u16)pwmValues[0];
+		}
+	}
+	if(glstate==1)
+	{
+		if(pwmValues[0]>params.thro_min)
+		{
+			glstate=0;
+			GLState.pwmBackup[0]=(u16)pwmValues[0];
+		}
+		else if(GLState.hallState[0])
+		{
+			GLState.hallState[0]=0;
+			glstate=2;
+		}
+		else
+		{
+			GLState.pwmBackup[0]=(u16)params.thro_homing;
+		}
+	}
+	if(glstate==2)
+	{
+		if(pwmValues[0]>params.thro_min)
+		{
+			glstate=0;
+			GLState.pwmBackup[0]=(u16)pwmValues[0];
+		}
+		else if(GLState.mode)
+		{
+			if(GLInt_CH0)
+			{
+				glstate=1;
+				GLState.pwmBackup[0]=(u16)params.thro_homing;
+			}
+		}
+		else
+		{
+			GLState.pwmBackup[0]=900;
+		}
+	}
+}
+
+void updateRollTest(void)
+{
+	if(rollstate==0)
+	{
+		if(GLState.hallState[0])
+		{
+			GLState.hallState[0]=0;
+			rollstate=1;
+			GLState.counter=0;
+			rollpos1=params.roll_delay*GLState.peroid[0];
+			rollpos2=params.roll_span*GLState.peroid[0];
+		}
+		else
+		{
+			GLState.pwmBackup[1]=LAileZero;
+			GLState.pwmBackup[2]=RAileZero;
+		}
+	}
+	if(rollstate==1)
+	{
+		if(GLState.counter>=rollpos1)
+		{
+			rollstate=2;
+		}
+		else
+		{
+			GLState.pwmBackup[1]=LAileZero;
+			GLState.pwmBackup[2]=RAileZero;
+		}
+	}
+	if(rollstate==2)
+	{
+		if(GLState.counter>rollpos2)
+		{
+			rollstate=3;
+		}
+		else
+		{
+			GLState.pwmBackup[1]=(u16)(LAileZero+GLState.rollValue);
+			GLState.pwmBackup[2]=RAileZero;
+		}
+	}
+	if(rollstate==3)
+	{
+		GLState.pwmBackup[1]=LAileZero;
+		GLState.pwmBackup[2]=RAileZero;
+	}
+}
+
+void GLUpdate(u8 glEnabled,u8 rollEnabled)
+{
+	//default:follow input
+	GLState.pwmBackup[0]=(u16)pwmValues[0];
+	GLState.pwmBackup[1]=(u16)pwmValues[1];
+	GLState.pwmBackup[2]=(u16)pwmValues[2];
 	
+	if(glEnabled)
+	{
+		if(!GLState.GLEnabled)
+		{			
+			glstate=0;
+		}
+		updateGlideLock();
+	}
+	else
+	{
+		GLState.pwmBackup[0]=(u16)pwmValues[0];
+	}
+	GLState.GLEnabled=glEnabled;
+	
+	if(rollEnabled)
+	{
+		if(!GLState.rollEnabled)
+		{
+			rollstate=0;
+		}
+	}
+	else
+	{
+		GLState.pwmBackup[1]=(u16)pwmValues[1];
+		GLState.pwmBackup[2]=(u16)pwmValues[2];
+	}
 }
 
 void EXTI15_10_IRQHandler(void)
@@ -47,13 +202,19 @@ void EXTI15_10_IRQHandler(void)
 	{
 		
 		EXTI_ClearITPendingBit(EXTI_Line12);
-		printf("12\r\n");
+		GLState.hallState[0]=1;
+		GLState.peroid[2]=GLState.peroid[1];
+		GLState.peroid[1]=GLState.freqCounter;
+		GLState.peroid[0]=(GLState.peroid[1]+GLState.peroid[2])>>1;
+		GLState.counter=0;
+		//printf("12\r\n");
 	}
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET)
 	{
 		
 		EXTI_ClearITPendingBit(EXTI_Line13);
-		printf("13\r\n");
+		GLState.hallState[1]=1;
+		//printf("13\r\n");
 	}
 
 }
