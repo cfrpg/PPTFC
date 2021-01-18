@@ -123,13 +123,14 @@ void updateRollTest(void)
 {
 	if(rollstate==0)
 	{
+		//printf("rt0\r\n");
 		if(GLState.hallState[0])
 		{
-			GLState.hallState[0]=0;
+			//GLState.hallState[0]=0;
 			rollstate=1;
 			GLState.counter=0;
 			rollpos1=params.roll_delay*GLState.peroid[0];
-			rollpos2=params.roll_span*GLState.peroid[0];
+			rollpos2=params.roll_span*GLState.peroid[0]+rollpos1;
 		}
 		else
 		{
@@ -139,6 +140,7 @@ void updateRollTest(void)
 	}
 	if(rollstate==1)
 	{
+		//printf("rt1\r\n");
 		if(GLState.counter>=rollpos1)
 		{
 			rollstate=2;
@@ -151,6 +153,7 @@ void updateRollTest(void)
 	}
 	if(rollstate==2)
 	{
+		//printf("rt2\r\n");
 		if(GLState.counter>rollpos2)
 		{
 			rollstate=3;
@@ -163,6 +166,7 @@ void updateRollTest(void)
 	}
 	if(rollstate==3)
 	{
+		//printf("rt3\r\n");
 		GLState.pwmBackup[1]=LAileZero;
 		GLState.pwmBackup[2]=RAileZero;
 	}
@@ -199,12 +203,14 @@ void GLUpdate(u8 glEnabled,u8 rollEnabled)
 		{
 			rollstate=0;
 		}
+		updateRollTest();
 	}
 	else
 	{
 		GLState.pwmBackup[1]=(u16)pwmValues[1];
 		GLState.pwmBackup[2]=(u16)pwmValues[2];
 	}
+	GLState.rollEnabled=rollEnabled;
 	GLState.hallState[0]=0;
 }
 

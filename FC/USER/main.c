@@ -132,12 +132,10 @@ int main(void)
 					//ledFlash=0;
 				}
 				else
-				{
-					
-					
+				{										
 					if(pwmValues[4]>1500)
 						t1=1;
-					GLUpdate(t,0);
+					GLUpdate(t,t1);
 					PWMSetVal(0,GLState.pwmBackup[0]);
 					PWMSetVal(1,GLState.pwmBackup[1]);
 					PWMSetVal(2,GLState.pwmBackup[2]);
@@ -146,7 +144,7 @@ int main(void)
 			else
 			{
 				if(pwmValues[0]>950)
-				{					
+				{
 					state=1;
 					GLState.throTgt=1000;
 					GLState.throVal=1000;
