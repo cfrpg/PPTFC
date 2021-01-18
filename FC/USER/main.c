@@ -114,6 +114,15 @@ int main(void)
 			{
 				GLState.rollValue=params.roll_step_val*3;
 			}
+			
+			t=0;
+			t1=0;
+			ledInterval=10000;
+			if(pwmValues[3]>1500)
+			{
+				t=1;
+				ledInterval=5000;
+			}
 			if(state)
 			{				
 				if(pwmValues[0]<=950)
@@ -124,13 +133,11 @@ int main(void)
 				}
 				else
 				{
-					t=0;
-					t1=0;
-					if(pwmValues[3]>1500)
-						t=1;
+					
+					
 					if(pwmValues[4]>1500)
 						t1=1;
-					GLUpdate(t,t1);
+					GLUpdate(t,0);
 					PWMSetVal(0,GLState.pwmBackup[0]);
 					PWMSetVal(1,GLState.pwmBackup[1]);
 					PWMSetVal(2,GLState.pwmBackup[2]);
@@ -139,9 +146,10 @@ int main(void)
 			else
 			{
 				if(pwmValues[0]>950)
-				{
-					
+				{					
 					state=1;
+					GLState.throTgt=1000;
+					GLState.throVal=1000;
 					//LEDSet(1);
 					//ledFlash=1;
 				}
@@ -185,7 +193,7 @@ int main(void)
 				LEDFlash(3);				
 			}
 			key<<=1;
-
+//			printf("%d %f\r\n",GLState.peroid[0],10000.0/GLState.peroid[0]);
 //			for(i=0;i<6;i++)
 //				printf("%d,",pwmValues[i]);
 //			printf("\r\n");

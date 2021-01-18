@@ -21,7 +21,7 @@ typedef struct
 	float roll_delay;
 	s32 roll_step_val;
 	float roll_span;
-	float ratio;
+	float thro_slope;
 	float rev;
 	float cpg_am;
 	float yaw_scale;

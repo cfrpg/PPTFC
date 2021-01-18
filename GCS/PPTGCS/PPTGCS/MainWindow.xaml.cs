@@ -42,7 +42,7 @@ namespace PPTGCS
 			parameters.Add(new Parameter() { ID = 4, Name = "roll_delay", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 5, Name = "roll_step_val", Type = 0, Value = 0 });
 			parameters.Add(new Parameter() { ID = 6, Name = "roll_span", Type = 5, Value = 0 });
-			parameters.Add(new Parameter() { ID = 7, Name = "ratio", Type = 5, Value = 0 });
+			parameters.Add(new Parameter() { ID = 7, Name = "thro_slope", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 8, Name = "dead_zone", Type = 5, Value = 0 });
 			parameters.Add(new Parameter() { ID = 9, Name = "cpg_am", Type = 3, Value = 0 });
 			parameters.Add(new Parameter() { ID = 10, Name = "yaw_scale", Type = 5, Value = 0 });

@@ -47,7 +47,7 @@ void ParamReset(void)
 	params.roll_delay=0.5;
 	params.roll_step_val=100;
 	params.roll_span=0.5;
-	params.ratio=7;
+	params.thro_slope=1.5;
 	//params.dead_zone=0.05;
 	params.rev=0;
 	params.cpg_am=20;
@@ -113,7 +113,7 @@ u8 ParamSet(u8 id,s32 v)
 			params.roll_span=paramReadFixed(v,5);
 			break;
 		case 7:
-			params.ratio=paramReadFixed(v,4);
+			params.thro_slope=paramReadFixed(v,5);
 			break;
 		case 8:
 			params.dead_zone=paramReadFixed(v,5);
@@ -154,7 +154,7 @@ void ParamShow(void)
 	printf("#4:roll_delay:%f\r\n",params.roll_delay);
 	printf("#5:roll_step_val:%d\r\n",params.roll_step_val);
 	printf("#6:roll_span:%f\r\n",params.roll_span);
-	printf("#7:ratio:%f\r\n",params.ratio);
+	printf("#7:thro_slope:%f\r\n",params.thro_slope);
 	printf("#8:rev:%f\r\n",params.rev);
 	printf("#9:cpg_am:%f\r\n",params.cpg_am);
 	printf("#10:yaw_scale:%f\r\n",params.yaw_scale);

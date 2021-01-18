@@ -64,50 +64,57 @@ void updateGlideLock(void)
 {
 	if(glstate==0)
 	{
+		//printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagl0\r\n");
 		if(pwmValues[0]<params.thro_min)
 		{
 			glstate=1;
+			//GLState.hallState[0]=0;
 		}
 		else
 		{
-			GLState.pwmBackup[0]=(u16)pwmValues[0];
+			GLState.throTgt=(u16)pwmValues[0];
 		}
 	}
 	if(glstate==1)
-	{
+	{		
+		//printf("aaaaaaaaaaaaaaaaaagl1\r\n");
 		if(pwmValues[0]>params.thro_min)
-		{
+		{			
 			glstate=0;
-			GLState.pwmBackup[0]=(u16)pwmValues[0];
+			GLState.throTgt=(u16)pwmValues[0];
 		}
 		else if(GLState.hallState[0])
 		{
-			GLState.hallState[0]=0;
+			//GLState.hallState[0]=0;
 			glstate=2;
 		}
 		else
 		{
-			GLState.pwmBackup[0]=(u16)params.thro_homing;
+			GLState.throTgt=(u16)params.thro_homing;
 		}
 	}
 	if(glstate==2)
-	{
+	{	
+		//printf("gl2\r\n");
 		if(pwmValues[0]>params.thro_min)
 		{
+			//printf("%d\r\n",pwmValues[0]);
 			glstate=0;
-			GLState.pwmBackup[0]=(u16)pwmValues[0];
+			GLState.throTgt=(u16)pwmValues[0];
 		}
 		else if(GLState.mode)
 		{
 			if(GLInt_CH0)
 			{
+				//printf("a%d\r\n",pwmValues[0]);
+				//GLState.hallState[0]=0;
 				glstate=1;
-				GLState.pwmBackup[0]=(u16)params.thro_homing;
+				GLState.throTgt=(u16)params.thro_homing;
 			}
 		}
 		else
 		{
-			GLState.pwmBackup[0]=900;
+			GLState.throTgt=900;
 		}
 	}
 }
@@ -167,14 +174,18 @@ void GLUpdate(u8 glEnabled,u8 rollEnabled)
 	GLState.pwmBackup[0]=(u16)pwmValues[0];
 	GLState.pwmBackup[1]=(u16)pwmValues[1];
 	GLState.pwmBackup[2]=(u16)pwmValues[2];
-	
+		
 	if(glEnabled)
 	{
 		if(!GLState.GLEnabled)
-		{			
+		{		
 			glstate=0;
 		}
 		updateGlideLock();
+		GLState.throVal+=params.thro_slope;
+		if(GLState.throVal>GLState.throTgt)
+			GLState.throVal=GLState.throTgt;
+		GLState.pwmBackup[0]=(u16)GLState.throVal;
 	}
 	else
 	{
@@ -194,6 +205,7 @@ void GLUpdate(u8 glEnabled,u8 rollEnabled)
 		GLState.pwmBackup[1]=(u16)pwmValues[1];
 		GLState.pwmBackup[2]=(u16)pwmValues[2];
 	}
+	GLState.hallState[0]=0;
 }
 
 void EXTI15_10_IRQHandler(void)
@@ -205,8 +217,8 @@ void EXTI15_10_IRQHandler(void)
 		GLState.hallState[0]=1;
 		GLState.peroid[2]=GLState.peroid[1];
 		GLState.peroid[1]=GLState.freqCounter;
-		GLState.peroid[0]=(GLState.peroid[1]+GLState.peroid[2])>>1;
-		GLState.counter=0;
+		GLState.peroid[0]=(GLState.peroid[1]+GLState.peroid[2])>>1;		
+		GLState.freqCounter=0;
 		//printf("12\r\n");
 	}
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET)
