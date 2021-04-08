@@ -160,7 +160,7 @@ void updateRollTest(void)
 		}
 		else
 		{
-			GLState.pwmBackup[1]=(u16)(LAileZero+GLState.rollValue);
+			GLState.pwmBackup[1]=(u16)(LAileZero-GLState.rollValue);
 			GLState.pwmBackup[2]=RAileZero;
 		}
 	}
@@ -184,6 +184,7 @@ void GLUpdate(u8 glEnabled,u8 rollEnabled)
 		if(!GLState.GLEnabled)
 		{		
 			glstate=0;
+			GLState.throVal=(u16)pwmValues[0];
 		}
 		updateGlideLock();
 		GLState.throVal+=params.thro_slope;

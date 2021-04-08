@@ -41,8 +41,8 @@ void ParamReset(void)
 {	
 	params.headFlag=0xCFCF;
 	params.pwm_rate=50;
-	params.thro_min=1200;
-	params.thro_homing=1190;
+	params.thro_min=1400;
+	params.thro_homing=1350;
 	params.dead_zone=20;
 	params.roll_delay=0.5;
 	params.roll_step_val=100;
