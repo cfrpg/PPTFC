@@ -6,8 +6,8 @@
 #define GLInt_CH0 PBin(12)
 #define GLInt_CH1 PBin(13)
 #define RollTestCh 1
-#define LAileZero 2000
-#define RAileZero 1000
+#define LAileZero 1000
+#define RAileZero 2000
 
 typedef struct
 {

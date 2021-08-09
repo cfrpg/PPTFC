@@ -121,7 +121,7 @@ int main(void)
 			if(pwmValues[3]>1500)
 			{
 				t=1;
-				ledInterval=3000;
+				ledInterval=5000;
 			}
 			if(state)
 			{				
@@ -155,7 +155,6 @@ int main(void)
 				PWMSetVal(1,(u16)pwmValues[1]);
 				PWMSetVal(2,(u16)pwmValues[2]);
 			}
-			//printf("---\r\n");
 			//printf("%d,%d,%d,%d,%d,%d\r\n",pwmValues[0],pwmValues[1],pwmValues[2],pwmValues[3],pwmValues[4],pwmValues[5]);
 		}				
 		//LED
